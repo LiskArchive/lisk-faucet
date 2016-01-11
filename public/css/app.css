@@ -1,0 +1,188 @@
+html, body {
+    padding : 0px;
+}
+
+.msg {
+text-align: center;
+font-size: 13px;
+color: #939495;
+}
+
+.msg a {
+text-decoration: none;
+color: #80bd01;
+}
+
+.msg a:active, .msg a:focus, .msg a:hover {
+text-decoration: underline;
+}
+
+.msg a:visited {
+text-decoration: none;
+color: #80bd01;
+}
+
+body {
+    margin: 0;
+    background: #35393b;
+    font-size: 16px;
+    color: #fff;
+    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+}
+
+.main-block {
+    color: #fff;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    width: 400px;
+    margin-left: -200px;
+}
+
+.main-block .logotype-block {
+    text-align: center;
+    z-index: 99999;
+    position: relative;
+}
+
+.main-block .logotype-block sup {
+    margin-left: 5px;
+    margin-top: -10px;
+    font-weight: 700;
+    font-size: 13px;
+    vertical-align: top;
+}
+
+
+.main-block .available-block {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.main-block .send-form {
+    margin-top: 50px;
+    position: relative;
+}
+
+.available-block {
+    margin-top: 20px;
+    color: #9b9d9e;
+}
+
+.available-block h5 {
+    font-size: 15px;
+    color: #80bd01;
+    position: relative;
+    /* position: absolute; */
+    /* right: 0px; */
+    /* margin-bottom: 50px; */
+}
+
+.input {
+    border: 1px solid #fff;
+    padding: 7px;
+    border-radius: 10px;
+    background: none;
+    width: 100%;
+    color: #fff;
+    outline: none;
+    font-size: 13px;
+    box-sizing: border-box;
+}
+
+
+.input:active, .input:focus {
+    outline: none;
+}
+
+.button {
+    display: block;
+    padding: 10px;
+    color: #fff;
+    background: #80bd01;
+    border: none;
+    margin-top: 10px;
+    cursor: pointer;
+    width: 100%;
+    height: 35px;
+    border-radius: 10px;
+}
+
+.transactions-list {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    width: 600px;
+    height: 100px;
+    margin-left: -300px;
+}
+
+.table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.table tr td {
+    padding: 10px;
+}
+
+.table tbody tr {
+    font-size: 14px;
+}
+
+#recaptcha_area
+{
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0px;
+    color: #80bd01;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    padding: 20px;
+    font-size: 14px;
+}
+
+.error {
+    width: 100%;
+    padding: 5px;
+    background-color: red;
+}
+
+.error p {
+    font-size: 14px;
+    margin: 0px;
+}
+
+.txId {
+    width: 100%;
+    padding: 5px;
+    background-color: #80bd01;
+}
+
+.txId p {
+    font-size: 14px;
+    margin: 0px;
+}
+
+.loading {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 99998;
+}
+
+.loading .loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: block;
+    margin-top: -8px;
+    margin-left: -8px;
+}

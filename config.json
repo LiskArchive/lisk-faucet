@@ -1,0 +1,34 @@
+{
+    "configuration" : {
+        "development": {
+            "host": "0.0.0.0",
+            "port": 8090,
+            "captcha" : {
+                "publicKey" : "",
+                "privateKey" : ""
+            }
+        },
+        "production": {
+            "host": "0.0.0.0",
+            "port": 8090,
+            "captcha" : {
+                "publicKey" : "",
+                "privateKey" : ""
+            }
+        },
+        "crypti" : {
+            "host" : "127.0.0.1",
+            "port" : 6040,
+            "passphrase" : "",
+            "address" : ""
+        },
+        "redis" : {
+            "host" : "127.0.0.1",
+            "port" : 6379,
+            "password" : ""
+        },
+        "amount" : 1,
+        "cacheTTL" : 43200,
+        "fixedPoint" : 100000000
+    }
+}
