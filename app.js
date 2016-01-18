@@ -18,15 +18,15 @@ client.debug_mode = true;
 
 app.configure(function () {
     app.set('strict routing', true);
-    app.set("crypti address", "http://" + config.crypti.host + ":" + config.crypti.port);
+    app.set("lisk address", "http://" + config.lisk.host + ":" + config.lisk.port);
 
-    app.passphrase = config.crypti.passphrase;
-    app.address = config.crypti.address;
+    app.passphrase = config.lisk.passphrase;
+    app.address = config.lisk.address;
     app.amountToSend = config.amount;
     app.cacheTTL = config.cacheTTL;
 
     app.use(function (req, res, next) {
-        req.crypti = app.get("crypti address");
+        req.lisk = app.get("lisk address");
         return next();
     });
 
