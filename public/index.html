@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html ng-app="faucet" class="ng-scope"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}.ng-hide-add-active,.ng-hide-remove{display:block!important;}</style>
         <meta charset="utf-8">
-        <title>Crypti Faucet</title>
+        <title>Lisk Faucet</title>
 
         <link rel="stylesheet" type="text/css" href="/css/animate.css">
         <link rel="stylesheet" type="text/css" href="/css/app.css">
@@ -16,7 +16,7 @@
     <body ng-controller="mainController">
     <div class="main-block">
         <div class="logotype-block">
-            <p><img src="/img/logo.png" alt="Crypti"><sup>faucet</sup></p>
+            <p><img src="/img/logo.png" alt="Lisk"><sup>faucet</sup></p>
         </div>
         <div class="error fx-fade-down" ng-show="error">
             <p><strong>Error:</strong> {{error}}.</p>
@@ -30,7 +30,7 @@
         <div class="send-form" ng-hide="blockHideForm">
             <form class="form">
                 <input type="text" ng-model="address" class="input" placeholder="Enter your address to get 1 free XCR">
-		<p class="msg">Don't have a crypti address? Click <a href="https://wallet.crypti.me/" target="_blank">HERE</a> to get one</p>
+		<p class="msg">Don't have a Lisk address? Click <a href="https://login.lisk.io/" target="_blank">HERE</a> to get one</p>
                 <div
                     vc-recaptcha
                     ng-model="captcha"
