@@ -1,5 +1,5 @@
-var crypti = require('./crypti.js');
+var lisk = require('./lisk.js');
 
 module.exports = function (app) {
-    crypti(app);
+    lisk(app);
 }
