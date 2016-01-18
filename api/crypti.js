@@ -8,7 +8,7 @@ module.exports = function (app) {
         async.series([
             function (cb) {
                 request({
-                    url : req.crypti + "/api/accounts/getBalance?address=" + app.address,
+                    url : req.lisk + "/api/accounts/getBalance?address=" + app.address,
                     json : true
                 }, function (err, resp, body) {
                     if (err) {
@@ -23,7 +23,7 @@ module.exports = function (app) {
             },
             function (cb) {
                 request({
-                    url : req.crypti + "/api/blocks/getFee",
+                    url : req.lisk + "/api/blocks/getFee",
                     json : true
                 }, function (err, resp, body) {
                     if (err) {
@@ -129,7 +129,7 @@ module.exports = function (app) {
 												}
 
 												request({
-													url : req.crypti + "/api/transactions",
+													url : req.lisk + "/api/transactions",
 													method : "PUT",
 													json : true,
 													body : {
