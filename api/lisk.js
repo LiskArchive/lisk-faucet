@@ -54,7 +54,7 @@ module.exports = function (app) {
         });
     });
 
-    app.post("/api/sendCrypti", function (req, res) {
+    app.post("/api/sendLisk", function (req, res) {
         var address = req.body.address,
             captcha_response = req.body.captcha,
             ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
