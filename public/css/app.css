@@ -2,15 +2,23 @@ html, body {
     padding : 0px;
 }
 
+body {
+    margin: 0;
+    background: #544835;
+    font-size: 18px;
+    color: #fff;
+    font-family: "Roboto", Arial, Helvetica, sans-serif;
+}
+
 .msg {
 text-align: center;
 font-size: 13px;
-color: #939495;
+color: #dcd6cf;
 }
 
 .msg a {
 text-decoration: none;
-color: #80bd01;
+color: #9c8678;
 }
 
 .msg a:active, .msg a:focus, .msg a:hover {
@@ -19,15 +27,7 @@ text-decoration: underline;
 
 .msg a:visited {
 text-decoration: none;
-color: #80bd01;
-}
-
-body {
-    margin: 0;
-    background: #35393b;
-    font-size: 16px;
-    color: #fff;
-    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+color: #9c8678;
 }
 
 .main-block {
@@ -45,14 +45,13 @@ body {
     position: relative;
 }
 
-.main-block .logotype-block sup {
+/*.main-block .logotype-block sup {
     margin-left: 5px;
     margin-top: -10px;
     font-weight: 700;
     font-size: 13px;
     vertical-align: top;
-}
-
+}*/
 
 .main-block .available-block {
     margin-top: 20px;
@@ -71,7 +70,7 @@ body {
 
 .available-block h5 {
     font-size: 15px;
-    color: #80bd01;
+    color: #0288d1;
     position: relative;
     /* position: absolute; */
     /* right: 0px; */
@@ -79,17 +78,18 @@ body {
 }
 
 .input {
-    border: 1px solid #fff;
-    padding: 7px;
-    border-radius: 10px;
-    background: none;
-    width: 100%;
-    color: #fff;
-    outline: none;
-    font-size: 13px;
-    box-sizing: border-box;
+  height: 35px;
+  line-height: 35px;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #dcd6cf;
+  display: block;
+  width: 100%;
+  background: none;
+  color: #dcd6cf;
+  font-size: 16px;
 }
-
 
 .input:active, .input:focus {
     outline: none;
@@ -98,14 +98,24 @@ body {
 .button {
     display: block;
     padding: 10px;
-    color: #fff;
-    background: #80bd01;
     border: none;
     margin-top: 10px;
     cursor: pointer;
     width: 100%;
-    height: 35px;
-    border-radius: 10px;
+    height: 48px;
+    border-radius: 2px;
+    text-align: center;
+    font-size: 14px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+    -webkit-transition: background-color 0.3s;
+    -ms-transition: background-color 0.3s;
+    transition: background-color 0.3s;
+    color: #fff;
+    background: #0288d1;
+}
+
+.button:hover {
+  background: #027ec2;
 }
 
 .transactions-list {
@@ -140,12 +150,26 @@ body {
 .footer {
     position: absolute;
     bottom: 0px;
-    color: #80bd01;
+    color: #dcd6cf;
     font-weight: bold;
     text-align: center;
     width: 100%;
     padding: 20px;
     font-size: 14px;
+}
+
+.footer a {
+  color: #9c8678;
+  text-decoration: none;
+}
+
+.footer a:active, .msg a:focus, .msg a:hover {
+text-decoration: underline;
+}
+
+.footer a:visited {
+text-decoration: none;
+color: #9c8678;
 }
 
 .error {
@@ -162,7 +186,7 @@ body {
 .txId {
     width: 100%;
     padding: 5px;
-    background-color: #80bd01;
+    background-color: #0288d1;
 }
 
 .txId p {
