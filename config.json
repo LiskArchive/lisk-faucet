@@ -19,8 +19,8 @@
         "lisk" : {
             "host" : "127.0.0.1",
             "port" : 7000,
-            "passphrase" : "",
-            "address" : ""
+            "passphrase" : "", // Example: 123
+            "address" : "" // Example: 12475940823804898745C
         },
         "redis" : {
             "host" : "127.0.0.1",
