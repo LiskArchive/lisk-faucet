@@ -1,3 +1,9 @@
+## Install
+
+1. `npm install`
+2. `redis-server`
+3. `node app.js`
+
 ## License
   
 The MIT License (MIT)  
