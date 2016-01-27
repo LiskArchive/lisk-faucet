@@ -2,7 +2,7 @@
     "configuration" : {
         "development": {
             "host": "0.0.0.0",
-            "port": 8000,
+            "port": 3000,
             "captcha" : {
                 "publicKey" : "",
                 "privateKey" : ""
@@ -10,7 +10,7 @@
         },
         "production": {
             "host": "0.0.0.0",
-            "port": 8000,
+            "port": 6000,
             "captcha" : {
                 "publicKey" : "",
                 "privateKey" : ""
@@ -18,7 +18,7 @@
         },
         "lisk" : {
             "host" : "127.0.0.1",
-            "port" : 6000,
+            "port" : 7000,
             "passphrase" : "",
             "address" : ""
         },
