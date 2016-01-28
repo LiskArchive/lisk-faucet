@@ -42,13 +42,13 @@ module.exports = function (app) {
             } else {
                 var balance = result[0];
                 var fee = result[2];
-                var isPossibleToSend = false;
+                var hasBalance = false;
 
                 if (app.amountToSend * req.fixedPoint + (app.amountToSend * req.fixedPoint / 100 * fee) <= balance) {
-                    isPossibleToSend = true;
+                    hasBalance = true;
                 }
 
-                return res.json({ success : true , captcha_key : app.captcha.publicKey, balance : balance / req.fixedPoint, fee : fee, working : isPossibleToSend, amount : app.amountToSend, donation_address : app.address, totalCount : app.totalCount });
+                return res.json({ success : true , captcha_key : app.captcha.publicKey, balance : balance / req.fixedPoint, fee : fee, hasBalance : hasBalance, amount : app.amountToSend, donation_address : app.address, totalCount : app.totalCount });
             }
         });
     });
