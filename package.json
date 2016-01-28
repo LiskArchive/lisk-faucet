@@ -1,13 +1,18 @@
 {
-  "name": "faucet",
+  "name": "lisk-faucet",
   "version": "1.0.0",
-  "description": "",
+  "description": "Lisk faucet application",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:LiskHQ/lisk-faucet.git"
+  },
+  "private": true,
+  "author": "Boris Povod <boris@crypti.me>, Max Kordek <max@lisk.io>",
+  "license": "MIT",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "async": "^0.9.0",
     "express": "~3.0",
