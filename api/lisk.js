@@ -40,15 +40,24 @@ module.exports = function (app) {
                 console.error(err);
                 return res.json({ success : false });
             } else {
-                var balance = result[0];
-                var fee = result[2];
-                var hasBalance = false;
+                var balance    = result[0],
+                    fee        = result[2],
+                    hasBalance = false;
 
                 if (app.amountToSend * req.fixedPoint + (app.amountToSend * req.fixedPoint / 100 * fee) <= balance) {
                     hasBalance = true;
                 }
 
-                return res.json({ success : true , captchaKey : app.captcha.publicKey, balance : balance / req.fixedPoint, fee : fee, hasBalance : hasBalance, amount : app.amountToSend, donation_address : app.address, totalCount : app.totalCount });
+                return res.json({
+                    success : true,
+                    captchaKey : app.captcha.publicKey,
+                    balance : balance / req.fixedPoint,
+                    fee : fee,
+                    hasBalance : hasBalance,
+                    amount : app.amountToSend,
+                    donation_address : app.address,
+                    totalCount : app.totalCount
+                });
             }
         });
     });
@@ -101,9 +110,9 @@ module.exports = function (app) {
             }
         ], function (err, values) {
             if (err) {
-                return res.json({ success : false, error : err});
+                return res.json({ success : false, error : err });
             } else {
-                simple_recaptcha(app.captcha.privateKey, ip, captcha_response, function(err) {
+                simple_recaptcha(app.captcha.privateKey, ip, captcha_response, function (err) {
                     if (!err) {
                         req.redis.set(ip, ip, function (err) {
                             if (err) {
