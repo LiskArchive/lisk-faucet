@@ -32,11 +32,10 @@ body {
 
 .main-block {
     color: #fff;
-    position: absolute;
-    top: 20%;
-    left: 50%;
-    width: 400px;
-    margin-left: -200px;
+    width: 512px;
+    margin: 0 auto;
+    padding: 25px;
+    padding-top: 20%;
 }
 
 .main-block .logotype-block {
@@ -149,6 +148,10 @@ body {
     margin-bottom: 20px;
 }
 
+.g-recaptcha {
+    margin-left: 106px;
+}
+
 .footer {
     position: absolute;
     bottom: 0px;
@@ -175,7 +178,6 @@ body {
 }
 
 .error {
-    width: 100%;
     padding: 5px;
     background-color: red;
 }
@@ -187,7 +189,6 @@ body {
 }
 
 .txId {
-    width: 100%;
     padding: 5px;
     background-color: #0288d1;
 }
