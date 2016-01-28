@@ -56,5 +56,5 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha'])
         $scope.getBase();
         $interval(function () {
             $scope.getBase();
-        }, 1000 * 60);
+        }, 60000);
     }]);
