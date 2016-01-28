@@ -52,16 +52,16 @@
             </div> -->
             <div class="send-form" ng-hide="blockHideForm">
                 <form class="form">
-                    <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to check its validity.">
+                    <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to receive {{amount || 0}} LISK for free.">
                     <p class="msg">Don't have a Lisk address? Use our <a href="https://login.lisk.io/" target="_blank">web client</a> to create one!</p>
                     <br>
-                    <div vc-recaptcha ng-model="captcha" lang="en" class="g-recaptcha" key="'6LfasxYTAAAAAIzcsWR1BV73esj_HUQvM9TI1uQP'" style="padding-left: 50px;"></div>
+                    <div vc-recaptcha ng-model="captcha" lang="en" class="g-recaptcha" key="'6LfasxYTAAAAAIzcsWR1BV73esj_HUQvM9TI1uQP'"></div>
                     <br>
-                    <input type="submit" class="button" value="Validate My Account" ng-click="send()">
+                    <input type="submit" class="button" value="Receive my free LISK" ng-click="send()">
                 </form>
             </div>
         </div>
-        <div class="footer" ng-hide="blockHideForm">Validator address:
+        <div class="footer" ng-hide="blockHideForm">Faucet address:
             <a href="https://explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address}}</a>
         </div>
         <div class="loading" ng-show="loading">
