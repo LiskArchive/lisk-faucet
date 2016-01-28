@@ -91,6 +91,7 @@ body {
     background: none;
     color: #dcd6cf;
     font-size: 16px;
+    text-align: center;
 }
 
 .input:active, .input:focus {
