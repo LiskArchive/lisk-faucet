@@ -11,23 +11,23 @@ body {
 }
 
 .msg {
-text-align: center;
-font-size: 13px;
-color: #dcd6cf;
+    text-align: center;
+    font-size: 13px;
+    color: #dcd6cf;
 }
 
 .msg a {
-text-decoration: none;
-color: #9c8678;
+    text-decoration: none;
+    color: #9c8678;
 }
 
 .msg a:active, .msg a:focus, .msg a:hover {
-text-decoration: underline;
+    text-decoration: underline;
 }
 
 .msg a:visited {
-text-decoration: none;
-color: #9c8678;
+    text-decoration: none;
+    color: #9c8678;
 }
 
 .main-block {
@@ -45,13 +45,15 @@ color: #9c8678;
     position: relative;
 }
 
-/*.main-block .logotype-block sup {
+/*
+.main-block .logotype-block sup {
     margin-left: 5px;
     margin-top: -10px;
     font-weight: 700;
     font-size: 13px;
     vertical-align: top;
-}*/
+}
+*/
 
 .main-block .available-block {
     margin-top: 20px;
@@ -78,17 +80,17 @@ color: #9c8678;
 }
 
 .input {
-  height: 35px;
-  line-height: 35px;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: 1px solid #dcd6cf;
-  display: block;
-  width: 100%;
-  background: none;
-  color: #dcd6cf;
-  font-size: 16px;
+    height: 35px;
+    line-height: 35px;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #dcd6cf;
+    display: block;
+    width: 100%;
+    background: none;
+    color: #dcd6cf;
+    font-size: 16px;
 }
 
 .input:active, .input:focus {
@@ -115,7 +117,7 @@ color: #9c8678;
 }
 
 .button:hover {
-  background: #027ec2;
+    background: #027ec2;
 }
 
 .transactions-list {
@@ -140,8 +142,7 @@ color: #9c8678;
     font-size: 14px;
 }
 
-#recaptcha_area
-{
+#recaptcha_area {
     margin: 0 auto;
     margin-top: 20px;
     margin-bottom: 20px;
@@ -159,17 +160,17 @@ color: #9c8678;
 }
 
 .footer a {
-  color: #9c8678;
-  text-decoration: none;
+    color: #9c8678;
+    text-decoration: none;
 }
 
 .footer a:active, .msg a:focus, .msg a:hover {
-text-decoration: underline;
+    text-decoration: underline;
 }
 
 .footer a:visited {
-text-decoration: none;
-color: #9c8678;
+    text-decoration: none;
+    color: #9c8678;
 }
 
 .error {
