@@ -1,7 +1,6 @@
 var request = require('request'),
     async = require('async'),
-	simple_recaptcha = require('simple-recaptcha');
-
+    simple_recaptcha = require('simple-recaptcha');
 
 module.exports = function (app) {
     app.get("/api/getBase", function (req, res) {
@@ -78,33 +77,33 @@ module.exports = function (app) {
         async.parallel([
             function (cb) {
                 req.redis.get(ip, function (err, value) {
-					if (err) {
-						console.error("Redis error: " + err);
-						return cb("Internal error");
-					} else if (value) {
-						return cb("From ip address already received XCR");
-					}
+                    if (err) {
+                        console.error("Redis error: " + err);
+                        return cb("Internal error");
+                    } else if (value) {
+                        return cb("From ip address already received XCR");
+                    }
 
-					cb();
+                    cb();
                 });
             },
             function (cb) {
-				req.redis.get(address, function (err, value) {
-					if (err) {
-						console.error("Redis error: " + err);
-						return cb("Internal error");
-					} else if (value) {
-						return cb("This address already received XCR")
-					}
+                req.redis.get(address, function (err, value) {
+                    if (err) {
+                        console.error("Redis error: " + err);
+                        return cb("Internal error");
+                    } else if (value) {
+                        return cb("This address already received XCR")
+                    }
 
-					return cb();
-				});
+                    return cb();
+                });
             }
         ], function (err, values) {
             if (err) {
                 return res.json({ success : false, error : err});
             } else {
-				simple_recaptcha(app.captcha.privateKey, ip, captcha_response, function(err) {
+                simple_recaptcha(app.captcha.privateKey, ip, captcha_response, function(err) {
                     if (!err) {
                         req.redis.set(ip, ip, function (err) {
                             if (err) {
@@ -116,55 +115,55 @@ module.exports = function (app) {
                                         console.error("Redis error: " + err);
                                         return res.json({ success : false, error : "internal error" });
                                     } else {
-										req.redis.set(address, address, function (err) {
-											if (err) {
-												console.error("Redis error: " + err);
-												return res.json({ success: false, error : "internal error" });
-											}
+                                        req.redis.set(address, address, function (err) {
+                                            if (err) {
+                                                console.error("Redis error: " + err);
+                                                return res.json({ success: false, error : "internal error" });
+                                            }
 
-											req.redis.send_command("EXPIRE", [address, 60], function (err) {
-												if (err) {
-													console.error("Redis error: " + err);
-													return res.json({ success: false, error: "internal error"});
-												}
+                                            req.redis.send_command("EXPIRE", [address, 60], function (err) {
+                                                if (err) {
+                                                    console.error("Redis error: " + err);
+                                                    return res.json({ success: false, error: "internal error"});
+                                                }
 
-												request({
-													url : req.lisk + "/api/transactions",
-													method : "PUT",
-													json : true,
-													body : {
-														amount : app.amountToSend * req.fixedPoint,
-														secret : app.passphrase,
-														recipientId : address
-													}
-												}, function (err, resp, body) {
-													if (err || resp.statusCode != 200) {
-														console.error("Wallet is down: " + err);
-														return res.json({ success : false, error: "internal server error" });
-													} else {
-														if (body.success == true) {
-															req.redis.send_command("EXPIRE", [ip, app.cacheTTL], function (err) {
-																if (err) {
-																	console.error("Redis error: " + err);
-																}
+                                                request({
+                                                    url : req.lisk + "/api/transactions",
+                                                    method : "PUT",
+                                                    json : true,
+                                                    body : {
+                                                        amount : app.amountToSend * req.fixedPoint,
+                                                        secret : app.passphrase,
+                                                        recipientId : address
+                                                    }
+                                                }, function (err, resp, body) {
+                                                    if (err || resp.statusCode != 200) {
+                                                        console.error("Wallet is down: " + err);
+                                                        return res.json({ success : false, error: "internal server error" });
+                                                    } else {
+                                                        if (body.success == true) {
+                                                            req.redis.send_command("EXPIRE", [ip, app.cacheTTL], function (err) {
+                                                                if (err) {
+                                                                    console.error("Redis error: " + err);
+                                                                }
 
-																req.redis.send_command("EXPIRE", [address, app.cacheTTL], function (err) {
-																	if (err) {
-																		console.error("Redis error: " + err);
-																	}
+                                                                req.redis.send_command("EXPIRE", [address, app.cacheTTL], function (err) {
+                                                                    if (err) {
+                                                                        console.error("Redis error: " + err);
+                                                                    }
 
-																	app.totalCount++;
-																	return res.json({ success : true, txId : body.transactionId });
-																});
-															});
-														} else {
-															console.error("Can't send transaction: " + body);
-															return res.json({success: false, error: "not enough amount on faucet account"});
-														}
-													}
-												});
-											})
-										});
+                                                                    app.totalCount++;
+                                                                    return res.json({ success : true, txId : body.transactionId });
+                                                                });
+                                                            });
+                                                        } else {
+                                                            console.error("Can't send transaction: " + body);
+                                                            return res.json({success: false, error: "not enough amount on faucet account"});
+                                                        }
+                                                    }
+                                                });
+                                            })
+                                        });
                                     }
                                 });
                             }

@@ -52,7 +52,7 @@ app.configure("development", function () {
     app.set("host", development.host);
     app.set("port", development.port);
     app.captcha = development.captcha;
-	app.set
+    app.set
 });
 
 app.configure("production", function () {
@@ -63,9 +63,9 @@ app.configure("production", function () {
 
 api(app);
 app.listen(app.get('port'), app.get('host'), function (err) {
-	if (err) {
-		console.log(err);
-	} else {
-		console.log("Server started at " + app.get('host') + ":" + app.get('port'));
-	}
+    if (err) {
+        console.log(err);
+    } else {
+        console.log("Server started at " + app.get('host') + ":" + app.get('port'));
+    }
 });
