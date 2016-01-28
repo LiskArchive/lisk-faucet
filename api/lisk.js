@@ -48,7 +48,7 @@ module.exports = function (app) {
                     hasBalance = true;
                 }
 
-                return res.json({ success : true , captcha_key : app.captcha.publicKey, balance : balance / req.fixedPoint, fee : fee, hasBalance : hasBalance, amount : app.amountToSend, donation_address : app.address, totalCount : app.totalCount });
+                return res.json({ success : true , captchaKey : app.captcha.publicKey, balance : balance / req.fixedPoint, fee : fee, hasBalance : hasBalance, amount : app.amountToSend, donation_address : app.address, totalCount : app.totalCount });
             }
         });
     });

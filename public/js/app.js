@@ -11,7 +11,7 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha'])
                     $scope.amount = resp.data.amount;
                     $scope.donation_address = resp.data.donation_address;
                     $scope.blockHideForm = false;
-                    $scope.captcha_key = resp.data.captcha_key;
+                    $scope.captchaKey = resp.data.captchaKey;
                     $scope.totalCount = resp.data.totalCount;
                 } else {
                     $scope.blockHideForm = true;
