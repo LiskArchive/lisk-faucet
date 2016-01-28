@@ -47,10 +47,10 @@
             <div class="txId fx-fade-down" ng-show="txId">
                 <p><strong>{{amount}} LISK sent, Transaction ID: </strong>{{txId}}</p>
             </div>
-            <!-- <div class="available-block" ng-hide="blockHideForm">
-            <h5>AVAILABLE : {{available}} LISK</h5>
+            <!-- <div class="available-block">
+            <h5>AVAILABLE : {{available || 0}} LISK</h5>
             </div> -->
-            <div class="send-form" ng-hide="blockHideForm">
+            <div class="send-form">
                 <form class="form">
                     <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to receive {{amount || 0}} LISK for free.">
                     <p class="msg">Don't have a Lisk address? Use our <a href="https://login.lisk.io/" target="_blank">web client</a> to create one!</p>
@@ -61,8 +61,8 @@
                 </form>
             </div>
         </div>
-        <div class="footer" ng-hide="blockHideForm">Faucet address:
-            <a href="https://explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address}}</a>
+        <div class="footer">Faucet address:
+            <a href="https://explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
         </div>
     </body>
 </html>
