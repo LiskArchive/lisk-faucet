@@ -9,14 +9,11 @@ module.exports = function (app) {
                 request({
                     url : req.lisk + "/api/accounts/getBalance?address=" + app.address,
                     json : true
-                }, function (err, resp, body) {
-                    if (err) {
-                        console.error("Can't get balance: " + err);
-                        cb(err);
-                    } else if (resp.statusCode == 200 && body.success == true) {
-                        cb(null, body.unconfirmedBalance);
+                }, function (error, resp, body) {
+                    if (error || resp.statusCode != 200 || !body.success) {
+                        return cb("Failed to get faucet balance");
                     } else {
-                        cb("Error, can't get faucet balance, invalid status code or success/status");
+                        return cb(null, body.unconfirmedBalance);
                     }
                 });
             },
@@ -24,21 +21,17 @@ module.exports = function (app) {
                 request({
                     url : req.lisk + "/api/blocks/getFee",
                     json : true
-                }, function (err, resp, body) {
-                    if (err) {
-                        console.log("Can't get transaction fee: " + err);
-                        cb(err);
-                    } else if (resp.statusCode == 200 && body.success == true) {
-                        cb(null, body.fee);
+                }, function (error, resp, body) {
+                    if (error || resp.statusCode != 200 || !body.success) {
+                        return cb("Failed to establish transaction fee");
                     } else {
-                        cb("Error, can't get transaction fee, invalid status code or success/status");
+                        return cb(null, body.fee);
                     }
                 })
             }
-        ], function (err, result) {
-            if (err) {
-                console.error(err);
-                return res.json({ success : false });
+        ], function (error, result) {
+            if (error) {
+                return res.json({ success : false, error : error });
             } else {
                 var balance    = result[0],
                     fee        = result[2],
@@ -63,123 +56,153 @@ module.exports = function (app) {
     });
 
     app.post("/api/sendLisk", function (req, res) {
-        var address = req.body.address,
+        var error = null,
+            address = req.body.address,
             captcha_response = req.body.captcha,
             ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-        if (!address || !captcha_response) {
-            return res.json({ success : false, error : "Invalid parameters" });
+        if (!address) { error = "Missing LISK address"; }
+
+        if (!captcha_response) { error = "Captcha validation failed, please try again"; }
+
+        if (address) {
+            address = address.trim();
+
+            if (address.indexOf('C') != address.length - 1 && address.indexOf('D') != address.length - 1) {
+                error = "Invalid LISK address";
+            }
+
+            var num = address.substring(0, address.length - 1);
+            if (isNaN(num)) { error = "Invalid LISK address"; }
         }
 
-        address = address.trim();
-
-        if (address.indexOf('C') != address.length - 1 && address.indexOf('D') != address.length - 1) {
-            return res.json({ success : false , error : "Invalid address" });
+        if (error) {
+            return res.json({ success : false, error : error });
         }
 
-        var num = address.substring(0, address.length - 1);
-
-        if (isNaN(num)) {
-            return res.json({ success : false , error : "Invalid address" });
-        }
-
-        async.parallel([
-            function (cb) {
-                req.redis.get(ip, function (err, value) {
-                    if (err) {
-                        console.error("Redis error: " + err);
-                        return cb("Internal error");
+        var parallel = {
+            authenticateIP : function (cb) {
+                req.redis.get(ip, function (error, value) {
+                    if (error) {
+                        return cb("Failed to authenticate IP address");
                     } else if (value) {
                         return cb("This IP address has already received LISK");
+                    } else {
+                        return cb(null);
                     }
-
-                    cb();
                 });
             },
-            function (cb) {
-                req.redis.get(address, function (err, value) {
-                    if (err) {
-                        console.error("Redis error: " + err);
-                        return cb("Internal error");
+            authenticateAddress : function (cb) {
+                req.redis.get(address, function (error, value) {
+                    if (error) {
+                        return cb("Failed to authenticate LISK address");
                     } else if (value) {
-                        return cb("This account has already received LISK")
+                        return cb("This account has already received LISK");
+                    } else {
+                        return cb(null);
                     }
-
-                    return cb();
                 });
             }
-        ], function (err, values) {
-            if (err) {
-                return res.json({ success : false, error : err });
-            } else {
-                simple_recaptcha(app.captcha.privateKey, ip, captcha_response, function (err) {
-                    if (!err) {
-                        req.redis.set(ip, ip, function (err) {
-                            if (err) {
-                                console.error("Redis error: " + err);
-                                return res.json({ success : false, error : "Internal error" });
-                            } else {
-                                req.redis.send_command("EXPIRE", [ip, 60], function (err) {
-                                    if (err) {
-                                        console.error("Redis error: " + err);
-                                        return res.json({ success : false, error : "Internal error" });
-                                    } else {
-                                        req.redis.set(address, address, function (err) {
-                                            if (err) {
-                                                console.error("Redis error: " + err);
-                                                return res.json({ success: false, error : "Internal error" });
-                                            }
+        }
 
-                                            req.redis.send_command("EXPIRE", [address, 60], function (err) {
-                                                if (err) {
-                                                    console.error("Redis error: " + err);
-                                                    return res.json({ success: false, error: "Internal error"});
-                                                }
-
-                                                request({
-                                                    url : req.lisk + "/api/transactions",
-                                                    method : "PUT",
-                                                    json : true,
-                                                    body : {
-                                                        amount : app.amountToSend * req.fixedPoint,
-                                                        secret : app.passphrase,
-                                                        recipientId : address
-                                                    }
-                                                }, function (err, resp, body) {
-                                                    if (err || resp.statusCode != 200) {
-                                                        console.error("Lisk node is down: " + err);
-                                                        return res.json({ success : false, error: "Internal error" });
-                                                    } else {
-                                                        if (body.success == true) {
-                                                            req.redis.send_command("EXPIRE", [ip, app.cacheTTL], function (err) {
-                                                                if (err) {
-                                                                    console.error("Redis error: " + err);
-                                                                }
-
-                                                                req.redis.send_command("EXPIRE", [address, app.cacheTTL], function (err) {
-                                                                    if (err) {
-                                                                        console.error("Redis error: " + err);
-                                                                    }
-
-                                                                    app.totalCount++;
-                                                                    return res.json({ success : true, txId : body.transactionId });
-                                                                });
-                                                            });
-                                                        } else {
-                                                            console.error("Can't send transaction: " + body);
-                                                            return res.json({success: false, error: "Faucet funds have all been spent"});
-                                                        }
-                                                    }
-                                                });
-                                            })
-                                        });
-                                    }
-                                });
-                            }
-                        });
+        var series = {
+            validateCaptcha : function (cb) {
+                simple_recaptcha(app.captcha.privateKey, ip, captcha_response, function (error) {
+                    if (error) {
+                        return cb("Captcha validation failed, please try again");
+                    } else {
+                        return cb(null);
                     }
-                    else {
-                        return res.json({ success : false, error : "Invalid captcha, please try again" });
+                });
+            },
+            cacheIP : function (cb) {
+                req.redis.set(ip, ip, function (error) {
+                    if (error) {
+                        return cb("Failed to cache IP address");
+                    } else {
+                        return cb(null);
+                    }
+                });
+            },
+            sendIPExpiry : function (cb) {
+                req.redis.send_command("EXPIRE", [ip, 60], function (error) {
+                    if (error) {
+                        return cb("Failed to send IP address expiry");
+                    } else {
+                        return cb(null);
+                    }
+                });
+            },
+            cacheAddress : function (cb) {
+                req.redis.set(address, address, function (error) {
+                    if (error) {
+                        return cb("Failed to cache LISK address");
+                    } else {
+                        return cb(null);
+                    }
+                });
+            },
+            sendAddressExpiry : function (cb) {
+                req.redis.send_command("EXPIRE", [address, 60], function (error) {
+                    if (error) {
+                        return cb("Failed to send LISK address expiry");
+                    } else {
+                        return cb(null);
+                    }
+                });
+            },
+            sendTransaction : function (cb) {
+                request({
+                    url : req.lisk + "/api/transactions",
+                    method : "PUT",
+                    json : true,
+                    body : {
+                        amount : app.amountToSend * req.fixedPoint,
+                        secret : app.passphrase,
+                        recipientId : address
+                    }
+                }, function (error, resp, body) {
+                    if (error || resp.statusCode != 200 || !body.success) {
+                        return cb("Failed to send transaction");
+                    } else {
+                        return cb(null, body);
+                    }
+                });
+            },
+            expireIPs : function (cb) {
+                req.redis.send_command("EXPIRE", [ip, app.cacheTTL], function (error) {
+                    return cb(error);
+                });
+            },
+            expireAddresses : function (cb) {
+                req.redis.send_command("EXPIRE", [address, app.cacheTTL], function (error) {
+                    return cb(error);
+                });
+            }
+        };
+
+        async.parallel([
+            parallel.authenticateIP,
+            parallel.authenticateAddress
+        ], function (error, values) {
+            if (error) {
+                return res.json({ success : false, error : error });
+            } else {
+                async.series([
+                    series.validateCaptcha,
+                    series.cacheIP,
+                    series.sendIPExpiry,
+                    series.cacheAddress,
+                    series.sendAddressExpiry,
+                    series.sendTransaction,
+                    series.expireIPs,
+                    series.expireAddresses
+                ], function (error, results) {
+                    if (error) {
+                        return res.json({ success : false, error : error });
+                    } else {
+                        app.totalCount++;
+                        return res.json({ success : true, txId : results[5].transactionId });
                     }
                 });
             }
