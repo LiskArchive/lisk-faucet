@@ -18,7 +18,7 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha'])
                     if (resp.data && resp.data.error) {
                         $scope.error = resp.data.error;
                     } else {
-                        $scope.error = "faucet node is offline, try later please";
+                        $scope.error = "Faucet node is offline, please try later";
                     }
                 }
             });
@@ -45,7 +45,7 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha'])
                     if (resp.data && resp.data.error) {
                         $scope.error = resp.data.error;
                     } else {
-                        $scope.error = "faucet node is offline, try later please";
+                        $scope.error = "Faucet node is offline, please try later";
                     }
 
                     vcRecaptchaService.reload();
