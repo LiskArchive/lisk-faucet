@@ -16,7 +16,7 @@ module.exports = function (app) {
                     } else if (resp.statusCode == 200 && body.success == true) {
                         cb(null, body.unconfirmedBalance);
                     } else {
-                        cb("Error, can't get balance, invalid status code or success/status");
+                        cb("Error, can't get faucet balance, invalid status code or success/status");
                     }
                 });
             },
@@ -26,12 +26,12 @@ module.exports = function (app) {
                     json : true
                 }, function (err, resp, body) {
                     if (err) {
-                        console.log("Can't get fee: ");
+                        console.log("Can't get transaction fee: " + err);
                         cb(err);
                     } else if (resp.statusCode == 200 && body.success == true) {
                         cb(null, body.fee);
                     } else {
-                        cb("Error, can't get transaction, invalid status code or success/status");
+                        cb("Error, can't get transaction fee, invalid status code or success/status");
                     }
                 })
             }
@@ -59,19 +59,19 @@ module.exports = function (app) {
             ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
         if (!address || !captcha_response) {
-            return res.json({ success : false, error : "invalid parameters" });
+            return res.json({ success : false, error : "Invalid parameters" });
         }
 
         address = address.trim();
 
         if (address.indexOf('C') != address.length - 1 && address.indexOf('D') != address.length - 1) {
-            return res.json({ success : false , error : "invalid address" });
+            return res.json({ success : false , error : "Invalid address" });
         }
 
         var num = address.substring(0, address.length - 1);
 
         if (isNaN(num)) {
-            return res.json({ success : false , error : "invalid address" });
+            return res.json({ success : false , error : "Invalid address" });
         }
 
         async.parallel([
@@ -81,7 +81,7 @@ module.exports = function (app) {
                         console.error("Redis error: " + err);
                         return cb("Internal error");
                     } else if (value) {
-                        return cb("From ip address already received XCR");
+                        return cb("This IP address has already received LISK");
                     }
 
                     cb();
@@ -93,7 +93,7 @@ module.exports = function (app) {
                         console.error("Redis error: " + err);
                         return cb("Internal error");
                     } else if (value) {
-                        return cb("This address already received XCR")
+                        return cb("This account has already received LISK")
                     }
 
                     return cb();
@@ -108,23 +108,23 @@ module.exports = function (app) {
                         req.redis.set(ip, ip, function (err) {
                             if (err) {
                                 console.error("Redis error: " + err);
-                                return res.json({ success : false, error : "internal error" });
+                                return res.json({ success : false, error : "Internal error" });
                             } else {
                                 req.redis.send_command("EXPIRE", [ip, 60], function (err) {
                                     if (err) {
                                         console.error("Redis error: " + err);
-                                        return res.json({ success : false, error : "internal error" });
+                                        return res.json({ success : false, error : "Internal error" });
                                     } else {
                                         req.redis.set(address, address, function (err) {
                                             if (err) {
                                                 console.error("Redis error: " + err);
-                                                return res.json({ success: false, error : "internal error" });
+                                                return res.json({ success: false, error : "Internal error" });
                                             }
 
                                             req.redis.send_command("EXPIRE", [address, 60], function (err) {
                                                 if (err) {
                                                     console.error("Redis error: " + err);
-                                                    return res.json({ success: false, error: "internal error"});
+                                                    return res.json({ success: false, error: "Internal error"});
                                                 }
 
                                                 request({
@@ -138,8 +138,8 @@ module.exports = function (app) {
                                                     }
                                                 }, function (err, resp, body) {
                                                     if (err || resp.statusCode != 200) {
-                                                        console.error("Wallet is down: " + err);
-                                                        return res.json({ success : false, error: "internal server error" });
+                                                        console.error("Lisk node is down: " + err);
+                                                        return res.json({ success : false, error: "Internal error" });
                                                     } else {
                                                         if (body.success == true) {
                                                             req.redis.send_command("EXPIRE", [ip, app.cacheTTL], function (err) {
@@ -158,7 +158,7 @@ module.exports = function (app) {
                                                             });
                                                         } else {
                                                             console.error("Can't send transaction: " + body);
-                                                            return res.json({success: false, error: "not enough amount on faucet account"});
+                                                            return res.json({success: false, error: "Faucet funds have all been spent"});
                                                         }
                                                     }
                                                 });
@@ -170,7 +170,7 @@ module.exports = function (app) {
                         });
                     }
                     else {
-                        return res.json({ success : false, error : "invalid captcha, try again" });
+                        return res.json({ success : false, error : "Invalid captcha, please try again" });
                     }
                 });
             }
