@@ -82,6 +82,7 @@ Open: [http://localhost:6000](http://localhost:6000)
 ## Authors
 
 - Boris Povod <boris@crypti.me>
+- Olivier Beddows <olivier@lisk.io>
 - Max Kordek <max@lisk.io>
 
 ## License
