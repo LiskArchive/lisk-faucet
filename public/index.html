@@ -33,13 +33,8 @@
             <form class="form">
                 <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to check its validity.">
 		              <p class="msg">Don't have a Lisk address? Use our <a href="https://login.lisk.io/" target="_blank">web client</a> to create one!</p><br>
-                <div
-                    vc-recaptcha
-                    ng-model="captcha"
-                    lang="en"
-                    key="'6Ld1JQwTAAAAAM-KlwLCVdcCJkoGWuR8mYK4nOI_'"
-                    style="padding-left:50px;"
-                ></div><br>
+                <div vc-recaptcha ng-model="captcha" lang="en" class="g-recaptcha" data-sitekey="6LfasxYTAAAAAIzcsWR1BV73esj_HUQvM9TI1uQP" style="padding-left:50px;"></div>
+                <br>
                 <input type="submit" class="button" value="Validate My Account" ng-click="send()">
             </form>
         </div>
