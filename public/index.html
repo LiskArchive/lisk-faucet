@@ -1,50 +1,72 @@
 <!DOCTYPE html>
 <html ng-app="faucet" class="ng-scope">
-  <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style type="text/css">@charset "UTF-8";[ng\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\:form{display:block;}.ng-animate-block-transitions{transition:0s all!important;-webkit-transition:0s all!important;}.ng-hide-add-active,.ng-hide-remove{display:block!important;}</style>
-      <meta charset="utf-8">
-      <title>Lisk - Faucet</title>
-
-      <link rel="stylesheet" type="text/css" href="/css/animate.css">
-      <link rel="stylesheet" type="text/css" href="/css/app.css">
-      <link rel="shortcut icon" href="/img/ico/favicon.ico" />
-
-      <script src="https://www.google.com/recaptcha/api.js?onload=vcRecapthaApiLoaded&render=explicit" async defer></script>
-      <script type="text/javascript" src="/lib/angular.min.js"></script>
-      <script type="text/javascript" src="/lib/recaptcha.js"></script>
-      <script type="text/javascript" src="/lib/effects.js"></script>
-      <script type="text/javascript" src="/js/app.js"></script>
-  </head>
-  <body ng-controller="mainController">
-    <div class="main-block">
-        <div class="logotype-block">
-            <p><img src="/img/logo.png" alt="Lisk"></p>
-        </div>
-        <div class="error fx-fade-down" ng-show="error">
-            <p><strong>Error:</strong> {{error}}.</p>
-        </div>
-        <div class="txId fx-fade-down" ng-show="txId">
-            <p><strong>{{amount}} XCR sent, Transaction ID: </strong>{{txId}}.</p>
-        </div>
-        <!--<div class="available-block" ng-hide="blockHideForm">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <style type="text/css">
+            @charset "UTF-8";
+            [ng\:cloak],
+            [ng-cloak],
+            [data-ng-cloak],
+            [x-ng-cloak],
+            .ng-cloak,
+            .x-ng-cloak,
+            .ng-hide {
+                display: none !important;
+            }
+            ng\:form {
+                display: block;
+            }
+            .ng-animate-block-transitions {
+                transition: 0s all!important;
+                -webkit-transition: 0s all!important;
+            }
+            .ng-hide-add-active,
+            .ng-hide-remove {
+                display: block!important;
+            }
+        </style>
+        <meta charset="utf-8">
+        <title>Lisk - Faucet</title>
+        <link rel="stylesheet" type="text/css" href="/css/animate.css">
+        <link rel="stylesheet" type="text/css" href="/css/app.css">
+        <link rel="shortcut icon" href="/img/ico/favicon.ico"/>
+        <script src="https://www.google.com/recaptcha/api.js?onload=vcRecapthaApiLoaded&render=explicit" async defer></script>
+        <script type="text/javascript" src="/lib/angular.min.js"></script>
+        <script type="text/javascript" src="/lib/recaptcha.js"></script>
+        <script type="text/javascript" src="/lib/effects.js"></script>
+        <script type="text/javascript" src="/js/app.js"></script>
+    </head>
+    <body ng-controller="mainController">
+        <div class="main-block">
+            <div class="logotype-block">
+                <p><img src="/img/logo.png" alt="Lisk"></p>
+            </div>
+            <div class="error fx-fade-down" ng-show="error">
+                <p><strong>Error:</strong> {{error}}.</p>
+            </div>
+            <div class="txId fx-fade-down" ng-show="txId">
+                <p><strong>{{amount}} LISK sent, Transaction ID: </strong>{{txId}}.</p>
+            </div>
+            <!-- <div class="available-block" ng-hide="blockHideForm">
             <h5>AVAILABLE : {{available}} XCR</h5>
-        </div>-->
-        <div class="send-form" ng-hide="blockHideForm">
-            <form class="form">
-                <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to check its validity.">
-		              <p class="msg">Don't have a Lisk address? Use our <a href="https://login.lisk.io/" target="_blank">web client</a> to create one!</p><br>
-                <div vc-recaptcha ng-model="captcha" lang="en" class="g-recaptcha" data-sitekey="6LfasxYTAAAAAIzcsWR1BV73esj_HUQvM9TI1uQP" style="padding-left:50px;"></div>
-                <br>
-                <input type="submit" class="button" value="Validate My Account" ng-click="send()">
-            </form>
+            </div> -->
+            <div class="send-form" ng-hide="blockHideForm">
+                <form class="form">
+                    <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to check its validity.">
+                    <p class="msg">Don't have a Lisk address? Use our <a href="https://login.lisk.io/" target="_blank">web client</a> to create one!</p>
+                    <br>
+                    <div vc-recaptcha ng-model="captcha" lang="en" class="g-recaptcha" data-sitekey="6LfasxYTAAAAAIzcsWR1BV73esj_HUQvM9TI1uQP" style="padding-left:50px;"></div>
+                    <br>
+                    <input type="submit" class="button" value="Validate My Account" ng-click="send()">
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="footer" ng-hide="blockHideForm">
-        Validator address: <a href="https://explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address}}</a>
-    </div>
-
-    <div class="loading" ng-show="loading">
-        <img src="/img/loader.gif" class="loader" alt="Loading...">
-    </div>
-  </body>
+        <div class="footer" ng-hide="blockHideForm">
+            Validator address:
+            <a href="https://explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address}}</a>
+        </div>
+        <div class="loading" ng-show="loading">
+            <img src="/img/loader.gif" class="loader" alt="Loading...">
+        </div>
+    </body>
 </html>
