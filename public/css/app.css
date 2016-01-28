@@ -44,16 +44,6 @@ body {
     position: relative;
 }
 
-/*
-.main-block .logotype-block sup {
-    margin-left: 5px;
-    margin-top: -10px;
-    font-weight: 700;
-    font-size: 13px;
-    vertical-align: top;
-}
-*/
-
 .main-block .available-block {
     margin-top: 20px;
     text-align: center;
@@ -73,9 +63,6 @@ body {
     font-size: 15px;
     color: #0288d1;
     position: relative;
-    /* position: absolute; */
-    /* right: 0px; */
-    /* margin-bottom: 50px; */
 }
 
 .input {
