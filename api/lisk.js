@@ -7,7 +7,7 @@ module.exports = function (app) {
         async.series([
             function (cb) {
                 request({
-                    url : req.lisk + "/api/accounts/getBalance?address=" + app.address,
+                    url : req.lisk + "/api/accounts/getBalance?address=" + app.locals.address,
                     json : true
                 }, function (error, resp, body) {
                     if (error || resp.statusCode != 200 || !body.success) {
@@ -37,19 +37,19 @@ module.exports = function (app) {
                     fee        = result[2],
                     hasBalance = false;
 
-                if (app.amountToSend * req.fixedPoint + (app.amountToSend * req.fixedPoint / 100 * fee) <= balance) {
+                if (app.locals.amountToSend * req.fixedPoint + (app.locals.amountToSend * req.fixedPoint / 100 * fee) <= balance) {
                     hasBalance = true;
                 }
 
                 return res.json({
                     success : true,
-                    captchaKey : app.captcha.publicKey,
+                    captchaKey : app.locals.captcha.publicKey,
                     balance : balance / req.fixedPoint,
                     fee : fee,
                     hasBalance : hasBalance,
-                    amount : app.amountToSend,
-                    donation_address : app.address,
-                    totalCount : app.totalCount
+                    amount : app.locals.amountToSend,
+                    donation_address : app.locals.address,
+                    totalCount : app.locals.totalCount
                 });
             }
         });
@@ -107,7 +107,7 @@ module.exports = function (app) {
 
         var series = {
             validateCaptcha : function (cb) {
-                simple_recaptcha(app.captcha.privateKey, ip, captcha_response, function (error) {
+                simple_recaptcha(app.locals.captcha.privateKey, ip, captcha_response, function (error) {
                     if (error) {
                         return cb("Captcha validation failed, please try again");
                     } else {
@@ -157,8 +157,8 @@ module.exports = function (app) {
                     method : "PUT",
                     json : true,
                     body : {
-                        amount : app.amountToSend * req.fixedPoint,
-                        secret : app.passphrase,
+                        amount : app.locals.amountToSend * req.fixedPoint,
+                        secret : app.locals.passphrase,
                         recipientId : address
                     }
                 }, function (error, resp, body) {
@@ -170,12 +170,12 @@ module.exports = function (app) {
                 });
             },
             expireIPs : function (cb) {
-                req.redis.send_command("EXPIRE", [ip, app.cacheTTL], function (error) {
+                req.redis.send_command("EXPIRE", [ip, app.locals.cacheTTL], function (error) {
                     return cb(error);
                 });
             },
             expireAddresses : function (cb) {
-                req.redis.send_command("EXPIRE", [address, app.cacheTTL], function (error) {
+                req.redis.send_command("EXPIRE", [address, app.locals.cacheTTL], function (error) {
                     return cb(error);
                 });
             }
@@ -201,7 +201,7 @@ module.exports = function (app) {
                     if (error) {
                         return res.json({ success : false, error : error });
                     } else {
-                        app.totalCount++;
+                        app.locals.totalCount++;
                         return res.json({ success : true, txId : results[5].transactionId });
                     }
                 });

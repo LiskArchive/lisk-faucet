@@ -26,10 +26,10 @@ app.configure(function () {
         app.set("lisk network", 'testnet');
     }
 
-    app.passphrase = config.lisk.passphrase;
-    app.address = config.lisk.address;
-    app.amountToSend = config.amount;
-    app.cacheTTL = config.cacheTTL;
+    app.locals.passphrase = config.lisk.passphrase;
+    app.locals.address = config.lisk.address;
+    app.locals.amountToSend = config.amount;
+    app.locals.cacheTTL = config.cacheTTL;
 
     app.use(function (req, res, next) {
         req.lisk = app.get("lisk address");
@@ -57,13 +57,13 @@ app.configure(function () {
 app.configure("development", function () {
     app.set("host", development.host);
     app.set("port", development.port);
-    app.captcha = development.captcha;
+    app.locals.captcha = development.captcha;
 });
 
 app.configure("production", function () {
     app.set("host", production.host);
     app.set("port", production.port);
-    app.captcha = production.captcha;
+    app.locals.captcha = production.captcha;
 });
 
 api(app);
