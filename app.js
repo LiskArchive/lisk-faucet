@@ -58,7 +58,6 @@ app.configure("development", function () {
     app.set("host", development.host);
     app.set("port", development.port);
     app.captcha = development.captcha;
-    app.set
 });
 
 app.configure("production", function () {
