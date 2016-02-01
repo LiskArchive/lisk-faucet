@@ -48,6 +48,10 @@ body {
     text-align: center;
 }
 
+.main-block .testnet-notice {
+    text-align: center;
+}
+
 .main-block .send-form {
     margin-top: 50px;
     position: relative;

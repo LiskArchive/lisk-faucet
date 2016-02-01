@@ -72,6 +72,9 @@
             <!-- <div class="available-block">
             <h5>AVAILABLE : {{available || 0}} LISK</h5>
             </div> -->
+            <div class="testnet-notice" ng-if="network == 'testnet'">
+              <p>This faucet is currently running on a testnet.<br>All payouts are for testing purposes only.</p>
+            </div>
             <div class="send-form">
                 <form class="form">
                     <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to receive {{amount || 0}} LISK for free">
