@@ -13,6 +13,7 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha'])
                     $scope.blockHideForm = false;
                     $scope.captchaKey = resp.data.captchaKey;
                     $scope.totalCount = resp.data.totalCount;
+                    $scope.network = resp.data.network;
                 } else {
                     $scope.blockHideForm = true;
                     if (resp.data && resp.data.error) {

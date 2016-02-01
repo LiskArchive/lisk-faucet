@@ -49,7 +49,8 @@ module.exports = function (app) {
                     hasBalance : hasBalance,
                     amount : app.locals.amountToSend,
                     donation_address : app.locals.address,
-                    totalCount : app.locals.totalCount
+                    totalCount : app.locals.totalCount,
+                    network : app.set("lisk network")
                 });
             }
         });
