@@ -69,7 +69,7 @@ module.exports = function (app) {
         if (address) {
             address = address.trim();
 
-            if (address.indexOf('C') != address.length - 1 && address.indexOf('D') != address.length - 1) {
+            if (address.indexOf('L') != address.length - 1 && address.indexOf('D') != address.length - 1) {
                 error = "Invalid LISK address";
             }
 
