@@ -1,0 +1,26 @@
+{
+    "configuration" : {
+        "production": {
+            "host": "0.0.0.0",
+            "port": 6000,
+            "captcha" : {
+                "publicKey" : "CHANGE_ME",
+                "privateKey" : "CHANGE_ME"
+            }
+        },
+        "lisk" : {
+            "host" : "127.0.0.1",
+            "port" : 7000,
+            "passphrase" : "CHANGE_ME",
+            "address" : "CHANGE_ME"
+        },
+        "redis" : {
+            "host" : "faucet-cache",
+            "port" : 6379,
+            "password" : ""
+        },
+        "amount" : 1,
+        "cacheTTL" : 43200,
+        "fixedPoint" : 100000000
+    }
+}

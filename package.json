@@ -19,7 +19,7 @@
     "moment": "^2.8.3",
     "redis": "^0.12.1",
     "request": "^2.42.0",
-    "simple-recaptcha": "git+ssh://git@github.com:wzrdtales/simple-recaptcha.git",
+    "simple-recaptcha": "https://github.com/wzrdtales/simple-recaptcha.git",
     "underscore": "^1.7.0"
   }
 }
