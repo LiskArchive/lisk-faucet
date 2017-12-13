@@ -7,7 +7,6 @@ USER lisk
 RUN cd /home/lisk/lisk-faucet && \
     npm install
 
-
 FROM node:6-alpine
 
 RUN adduser -D lisk
