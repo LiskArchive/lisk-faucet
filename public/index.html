@@ -78,7 +78,7 @@
             <div class="send-form">
                 <form class="form">
                     <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to receive {{amount || 0}} LSK for free">
-                    <p class="msg">Don't have a Lisk address? Use our <a href="https://login.lisk.io/" target="_blank">web client</a> to create one!</p>
+                    <p class="msg">Don't have a Lisk address? Use our <a href="https://testnet.lisk.io/" target="_blank">web client</a> to create one!</p>
                     <br>
                     <div vc-recaptcha ng-model="captcha" lang="en" class="g-recaptcha" key="'6LfasxYTAAAAAIzcsWR1BV73esj_HUQvM9TI1uQP'"></div>
                     <br>
@@ -87,7 +87,7 @@
             </div>
         </div>
         <div class="footer">Faucet address:
-            <a href="https://explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
+            <a href="https://testnet-explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
         </div>
     </body>
 </html>
