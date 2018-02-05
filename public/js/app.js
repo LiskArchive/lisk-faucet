@@ -8,7 +8,7 @@ var reCaptchaModule = angular.module('reCaptchaModule', [])
             scope: {},
             replace: true,
             controller: function($scope, $element) {
-                var deregister =  $scope.$on('captchaPublicKeyUpdate', function(event, args) {
+                var deregister = $scope.$on('captchaPublicKeyUpdate', function(event, args) {
                     var el = $compile('<div vc-recaptcha ng-model="captcha" lang="en" class="g-recaptcha" key="\'' + args.captchaPublicKey + '\'"></div>')($scope);
                     $element.replaceWith(el);
                     deregister();
