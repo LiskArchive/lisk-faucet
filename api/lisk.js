@@ -168,7 +168,7 @@ module.exports = function (app) {
                         'os': 'lisk-js-api',
                         'version': app.locals.liskVersion,
                         'minVersion': app.locals.liskMinVersion,
-                        'port': 4000
+                        'port': app.locals.port
                     },
                     body : {
                         transaction: transaction
