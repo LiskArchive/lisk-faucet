@@ -69,9 +69,6 @@
             <div class="txId fx-fade-down" ng-show="txId">
                 <p><strong>{{amount}} LSK sent, Transaction ID: </strong>{{txId}}</p>
             </div>
-            <!-- <div class="available-block">
-            <h5>AVAILABLE : {{available || 0}} LSK</h5>
-            </div> -->
             <div class="testnet-notice" ng-if="network == 'testnet'">
               <p>This faucet is currently running on a testnet.<br>All payouts are for testing purposes only.</p>
             </div>
@@ -80,7 +77,7 @@
                     <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to receive {{amount || 0}} LSK for free">
                     <p class="msg">Don't have a Lisk address? Use our <a href="https://login.lisk.io/" target="_blank">web client</a> to create one!</p>
                     <br>
-                    <div vc-recaptcha ng-model="captcha" lang="en" class="g-recaptcha" key="'6LfasxYTAAAAAIzcsWR1BV73esj_HUQvM9TI1uQP'"></div>
+                    <div recaptcha-custom></div>
                     <br>
                     <input type="submit" class="button" value="Receive my free LSK" ng-click="send()">
                 </form>
