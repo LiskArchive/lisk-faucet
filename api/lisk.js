@@ -1,6 +1,7 @@
-var request = require('request'),
-    async = require('async'),
-    simple_recaptcha = require('simple-recaptcha');
+const request = require('request'),
+      async = require('async'),
+      simple_recaptcha = require('simple-recaptcha'),
+      lisk = require('lisk-js');
 
 module.exports = function (app) {
     app.get("/api/getBase", function (req, res) {
@@ -153,14 +154,24 @@ module.exports = function (app) {
                 });
             },
             sendTransaction : function (cb) {
+                var amount      = app.locals.amountToSend * req.fixedPoint;
+                var transaction = lisk.transaction.createTransaction(address, amount, app.locals.passphrase);
+
                 request({
-                    url : req.lisk + "/api/transactions",
-                    method : "PUT",
+                    url : req.lisk + "/peer/transactions",
+                    method : "POST",
                     json : true,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'nethash': app.locals.nethash,
+                        'broadhash': app.locals.broadhash,
+                        'os': 'lisk-js-api',
+                        'version': app.locals.liskVersion,
+                        'minVersion': app.locals.liskMinVersion,
+                        'port': app.locals.port
+                    },
                     body : {
-                        amount : app.locals.amountToSend * req.fixedPoint,
-                        secret : app.locals.passphrase,
-                        recipientId : address
+                        transaction: transaction
                     }
                 }, function (error, resp, body) {
                     if (error || resp.statusCode != 200 || !body.success) {

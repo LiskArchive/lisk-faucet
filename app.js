@@ -28,6 +28,12 @@ if (config.lisk.port == 8000) {
     app.set("lisk network", 'testnet');
 }
 
+app.locals.host = config.lisk.host;
+app.locals.port = config.lisk.port;
+app.locals.nethash = config.lisk.nethash;
+app.locals.broadhash = config.lisk.broadhash;
+app.locals.liskVersion = config.lisk.version;
+app.locals.liskMinVersion = config.lisk.minVersion;
 app.locals.passphrase = config.lisk.passphrase;
 app.locals.address = config.lisk.address;
 app.locals.amountToSend = config.amount;

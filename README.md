@@ -42,6 +42,10 @@ Open `config.json` and complete the following details.
       "port" : 7000,        // <-- 7000 for testnet, 8000 for mainnet
       "passphrase" : "",    // <-- Passphrase of faucet account
       "address" : ""        // <-- Address of faucet account
+      "nethash": "",        // <-- Nethash of the network
+      "broadhash": "",      // <-- Broadhash of the network
+      "version": "0.0.0a",  // <-- Expected version of lisk-core end point
+      "minVersion": "0.0.0" // <-- Minimal version of lisk-core that will be accepted
   }
   ```
 
