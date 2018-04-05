@@ -8,10 +8,10 @@ module.exports = function (app) {
         async.series([
             function (cb) {
                 request({
-                    url : req.lisk + "/api/accounts/getBalance?address=" + app.locals.address,
+                    url : req.lisk + "/api/accounts?address=" + app.locals.address,
                     json : true
                 }, function (error, resp, body) {
-                    if (error || resp.statusCode != 200 || !body.success) {
+                    if (error || resp.statusCode != 200 || !body.data) {
                         return cb("Failed to get faucet balance");
                     } else {
                         return cb(null, body.unconfirmedBalance);
@@ -20,13 +20,13 @@ module.exports = function (app) {
             },
             function (cb) {
                 request({
-                    url : req.lisk + "/api/blocks/getFee",
+                    url : req.lisk + "/api/node/constants",
                     json : true
                 }, function (error, resp, body) {
-                    if (error || resp.statusCode != 200 || !body.success) {
+                    if (error || resp.statusCode != 200 || !body.data) {
                         return cb("Failed to establish transaction fee");
                     } else {
-                        return cb(null, body.fee);
+                        return cb(null, body.data.fees.send);
                     }
                 })
             }
@@ -155,30 +155,23 @@ module.exports = function (app) {
             },
             sendTransaction : function (cb) {
                 var amount      = app.locals.amountToSend * req.fixedPoint;
-                var transaction = lisk.transaction.createTransaction(address, amount, app.locals.passphrase);
+                var transaction = lisk.default.transaction.transfer(
+                    {
+                        recipientId: address,
+                        amount: amount,
+                        passphrase: app.locals.passphrase,
+                    }
+                );
 
-                request({
-                    url : req.lisk + "/peer/transactions",
-                    method : "POST",
-                    json : true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'nethash': app.locals.nethash,
-                        'broadhash': app.locals.broadhash,
-                        'os': 'lisk-js-api',
-                        'version': app.locals.liskVersion,
-                        'minVersion': app.locals.liskMinVersion,
-                        'port': app.locals.port
-                    },
-                    body : {
-                        transaction: transaction
-                    }
-                }, function (error, resp, body) {
-                    if (error || resp.statusCode != 200 || !body.success) {
-                        return cb("Failed to send transaction");
-                    } else {
-                        return cb(null, body);
-                    }
+                const apiClient = new lisk.default.APIClient(
+                    [ req.lisk ],
+                    app.locals.nethash,
+                    {}
+                );
+                apiClient.transactions.broadcast(transaction).then(transaction => {
+                    return cb(null, transaction.data);
+                }).catch(err => {
+                    return cb("Failed to send transaction");
                 });
             },
             expireIPs : function (cb) {
