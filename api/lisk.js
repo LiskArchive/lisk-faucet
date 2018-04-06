@@ -1,34 +1,30 @@
 const request = require('request'),
       async = require('async'),
       simple_recaptcha = require('simple-recaptcha'),
-      lisk = require('lisk-js');
+      lisk = require('lisk-js').default;
 
 module.exports = function (app) {
     app.get("/api/getBase", function (req, res) {
+        const apiClient = new lisk.APIClient(
+            [ req.lisk ],
+            app.locals.nethash
+        );
+
         async.series([
             function (cb) {
-                request({
-                    url : req.lisk + "/api/accounts?address=" + app.locals.address,
-                    json : true
-                }, function (error, resp, body) {
-                    if (error || resp.statusCode != 200 || !body.data) {
-                        return cb("Failed to get faucet balance");
-                    } else {
-                        return cb(null, body.unconfirmedBalance);
-                    }
+                apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
+                    cb(null, accounts.data[0].unconfirmedBalance);
+                }).catch(err => {
+                    cb("Failed to get faucet balance");
                 });
             },
             function (cb) {
-                request({
-                    url : req.lisk + "/api/node/constants",
-                    json : true
-                }, function (error, resp, body) {
-                    if (error || resp.statusCode != 200 || !body.data) {
-                        return cb("Failed to establish transaction fee");
-                    } else {
-                        return cb(null, body.data.fees.send);
-                    }
-                })
+                apiClient.node.getConstants()
+                    .then(constants => {
+                        cb(null, constants.data.fees.send);
+                    }).catch(err => {
+                        cb("Failed to establish transaction fee");
+                    });
             }
         ], function (error, result) {
             if (error) {
@@ -155,7 +151,7 @@ module.exports = function (app) {
             },
             sendTransaction : function (cb) {
                 var amount      = app.locals.amountToSend * req.fixedPoint;
-                var transaction = lisk.default.transaction.transfer(
+                var transaction = lisk.transaction.transfer(
                     {
                         recipientId: address,
                         amount: amount,
@@ -163,10 +159,9 @@ module.exports = function (app) {
                     }
                 );
 
-                const apiClient = new lisk.default.APIClient(
+                const apiClient = new lisk.APIClient(
                     [ req.lisk ],
-                    app.locals.nethash,
-                    {}
+                    app.locals.nethash
                 );
                 apiClient.transactions.broadcast(transaction).then(transaction => {
                     return cb(null, transaction.data);
