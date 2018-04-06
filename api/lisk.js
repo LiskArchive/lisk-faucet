@@ -1,34 +1,30 @@
 const request = require('request'),
       async = require('async'),
       simple_recaptcha = require('simple-recaptcha'),
-      lisk = require('lisk-js');
+      lisk = require('lisk-js').default;
 
 module.exports = function (app) {
     app.get("/api/getBase", function (req, res) {
+        const apiClient = new lisk.APIClient(
+            [ req.lisk ],
+            app.locals.nethash
+        );
+
         async.series([
             function (cb) {
-                request({
-                    url : req.lisk + "/api/accounts/getBalance?address=" + app.locals.address,
-                    json : true
-                }, function (error, resp, body) {
-                    if (error || resp.statusCode != 200 || !body.success) {
-                        return cb("Failed to get faucet balance");
-                    } else {
-                        return cb(null, body.unconfirmedBalance);
-                    }
+                apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
+                    cb(null, accounts.data[0].unconfirmedBalance);
+                }).catch(err => {
+                    cb("Failed to get faucet balance");
                 });
             },
             function (cb) {
-                request({
-                    url : req.lisk + "/api/blocks/getFee",
-                    json : true
-                }, function (error, resp, body) {
-                    if (error || resp.statusCode != 200 || !body.success) {
-                        return cb("Failed to establish transaction fee");
-                    } else {
-                        return cb(null, body.fee);
-                    }
-                })
+                apiClient.node.getConstants()
+                    .then(constants => {
+                        cb(null, constants.data.fees.send);
+                    }).catch(err => {
+                        cb("Failed to establish transaction fee");
+                    });
             }
         ], function (error, result) {
             if (error) {
@@ -155,30 +151,22 @@ module.exports = function (app) {
             },
             sendTransaction : function (cb) {
                 var amount      = app.locals.amountToSend * req.fixedPoint;
-                var transaction = lisk.transaction.createTransaction(address, amount, app.locals.passphrase);
+                var transaction = lisk.transaction.transfer(
+                    {
+                        recipientId: address,
+                        amount: amount,
+                        passphrase: app.locals.passphrase,
+                    }
+                );
 
-                request({
-                    url : req.lisk + "/peer/transactions",
-                    method : "POST",
-                    json : true,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'nethash': app.locals.nethash,
-                        'broadhash': app.locals.broadhash,
-                        'os': 'lisk-js-api',
-                        'version': app.locals.liskVersion,
-                        'minVersion': app.locals.liskMinVersion,
-                        'port': app.locals.port
-                    },
-                    body : {
-                        transaction: transaction
-                    }
-                }, function (error, resp, body) {
-                    if (error || resp.statusCode != 200 || !body.success) {
-                        return cb("Failed to send transaction");
-                    } else {
-                        return cb(null, body);
-                    }
+                const apiClient = new lisk.APIClient(
+                    [ req.lisk ],
+                    app.locals.nethash
+                );
+                apiClient.transactions.broadcast(transaction).then(transaction => {
+                    return cb(null, transaction.data);
+                }).catch(err => {
+                    return cb("Failed to send transaction");
                 });
             },
             expireIPs : function (cb) {
