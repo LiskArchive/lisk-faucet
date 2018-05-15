@@ -61,7 +61,10 @@
                 <p><strong>{{amount}} LSK sent, Transaction ID: </strong>{{txId}}</p>
             </div>
             <div class="testnet-notice" ng-if="network == 'testnet'">
-              <p>This faucet is currently running on a testnet.<br>All payouts are for testing purposes only.</p>
+                <p>This faucet is currently running on a testnet.<br>All payouts are for testing purposes only.</p>
+            </div>
+            <div class="testnet-notice" ng-if="network == 'betanet'">
+                <p>This faucet is currently running on a betanet.<br>All payouts are for testing purposes only.</p>
             </div>
             <div class="send-form">
                 <form class="form">
