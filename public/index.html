@@ -42,6 +42,7 @@
 
         <link rel="stylesheet" type="text/css" href="/css/animate.min.css">
         <link rel="stylesheet" type="text/css" href="/css/app.css">
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
 
         <script src="https://www.google.com/recaptcha/api.js?onload=vcRecapthaApiLoaded&render=explicit" async defer></script>
         <script type="text/javascript" src="/lib/angular.min.js"></script>
@@ -52,7 +53,7 @@
     <body ng-controller="mainController">
         <div class="main-block">
             <div class="logotype-block">
-                <p><a href="https://lisk.io/"><img src="/img/logo.png" alt="Lisk"></a></p>
+                <p><a href="https://lisk.io/"><img src="/img/logo.png" height="160" width="400" alt="Lisk"></a></p>
             </div>
             <div class="error fx-fade-down" ng-show="error">
                 <p><strong>Error:</strong> {{error}}</p>
@@ -61,7 +62,8 @@
                 <p><strong>{{amount}} LSK sent, Transaction ID: </strong>{{txId}}</p>
             </div>
             <div class="testnet-notice" ng-if="network == 'testnet'">
-              <p>This faucet is currently running on a testnet.<br>All payouts are for testing purposes only.</p>
+              <p>This faucet is currently running on a testnet.</p>
+              <p>All payouts are for testing purposes only.</p>
             </div>
             <div class="send-form">
                 <form class="form">
