@@ -62,7 +62,7 @@ module.exports = function (app) {
             captcha_response = req.body.captcha,
             ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-        if (!address) { error = "Missing LISK address"; }
+        if (!address) { error = "Missing Lisk ID"; }
 
         if (!captcha_response) { error = "Captcha validation failed, please try again"; }
 
@@ -70,11 +70,11 @@ module.exports = function (app) {
             address = address.trim();
 
             if (address.indexOf('L') != address.length - 1 && address.indexOf('D') != address.length - 1) {
-                error = "Invalid LISK address";
+                error = "Invalid Lisk ID";
             }
 
             var num = address.substring(0, address.length - 1);
-            if (isNaN(num)) { error = "Invalid LISK address"; }
+            if (isNaN(num)) { error = "Invalid Lisk ID"; }
         }
 
         if (error) {
@@ -87,7 +87,7 @@ module.exports = function (app) {
                     if (error) {
                         return cb("Failed to authenticate IP address");
                     } else if (value) {
-                        return cb("This IP address has already received LISK");
+                        return cb("This IP address has already received LSK");
                     } else {
                         return cb(null);
                     }
@@ -96,9 +96,9 @@ module.exports = function (app) {
             authenticateAddress : function (cb) {
                 req.redis.get(address, function (error, value) {
                     if (error) {
-                        return cb("Failed to authenticate LISK address");
+                        return cb("Failed to authenticate Lisk ID");
                     } else if (value) {
-                        return cb("This account has already received LISK");
+                        return cb("This account has already received LSK");
                     } else {
                         return cb(null);
                     }
@@ -137,7 +137,7 @@ module.exports = function (app) {
             cacheAddress : function (cb) {
                 req.redis.set(address, address, function (error) {
                     if (error) {
-                        return cb("Failed to cache LISK address");
+                        return cb("Failed to cache Lisk ID");
                     } else {
                         return cb(null);
                     }
@@ -146,7 +146,7 @@ module.exports = function (app) {
             sendAddressExpiry : function (cb) {
                 req.redis.send_command("EXPIRE", [address, 60], function (error) {
                     if (error) {
-                        return cb("Failed to send LISK address expiry");
+                        return cb("Failed to send Lisk ID expiry");
                     } else {
                         return cb(null);
                     }
