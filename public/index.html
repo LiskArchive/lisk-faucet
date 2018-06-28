@@ -78,7 +78,8 @@
             </div>
         </div>
         <div class="footer">Faucet address:
-            <a href="https://testnet-explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
+            <a ng-if="network == 'testnet'" href="https://testnet-explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
+            <a ng-if="network == 'betanet'" href="https://betanet-explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
         </div>
     </body>
 </html>
