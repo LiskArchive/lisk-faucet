@@ -1,13 +1,12 @@
 const request = require('request'),
       async = require('async'),
       simple_recaptcha = require('simple-recaptcha'),
-      lisk = require('lisk-js').default;
+      lisk = require('lisk-elements').default;
 
 module.exports = function (app) {
     app.get("/api/getBase", function (req, res) {
         const apiClient = new lisk.APIClient(
-            [ req.lisk ],
-            app.locals.nethash
+            [ req.lisk ]
         );
 
         async.series([
@@ -160,8 +159,7 @@ module.exports = function (app) {
                 );
 
                 const apiClient = new lisk.APIClient(
-                    [ req.lisk ],
-                    app.locals.nethash
+                    [ req.lisk ]
                 );
                 apiClient.transactions.broadcast(transaction).then(transaction => {
                     return cb(null, transaction.data);
