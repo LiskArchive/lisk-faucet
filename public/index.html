@@ -59,16 +59,17 @@
                 <p><strong>Error:</strong> {{error}}</p>
             </div>
             <div class="txId fx-fade-down" ng-show="txId">
-                <p><strong>{{amount}} LSK sent, Transaction ID: </strong>{{txId}}</p>
+                <p><strong>{{amount}} LSK has been sent to your account.</p>
             </div>
             <div class="testnet-notice" ng-if="network == 'testnet'">
-              <p>This faucet is currently running on a testnet.</p>
-              <p>All payouts are for testing purposes only.</p>
+                <p>This faucet is currently running on a testnet.<br>All payouts are for testing purposes only.</p>
+            </div>
+            <div class="testnet-notice" ng-if="network == 'betanet'">
+                <p>This faucet is currently running on a betanet.<br>All payouts are for testing purposes only.</p>
             </div>
             <div class="send-form">
                 <form class="form">
-                    <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to receive {{amount || 0}} LSK for free">
-                    <p class="msg">Don't have a Lisk address? Use our <a href="https://testnet.lisk.io/" target="_blank">web client</a> to create one!</p>
+                    <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk ID to receive {{amount || 0}} LSK for free">
                     <br>
                     <div recaptcha-custom></div>
                     <br>

@@ -24,6 +24,8 @@ app.set("lisk address", "http://" + config.lisk.host + ":" + config.lisk.port);
 
 if (config.lisk.port == 8000) {
     app.set("lisk network", 'mainnet');
+} else if (config.lisk.port == 5000) {
+    app.set("lisk network", 'betanet');
 } else {
     app.set("lisk network", 'testnet');
 }

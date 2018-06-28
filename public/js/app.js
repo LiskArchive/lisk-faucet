@@ -59,7 +59,7 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha', 'reCaptchaModule'])
                 $scope.error = null;
 
                 if (resp.data && resp.data.success) {
-                    $scope.txId = resp.data.txId;
+                    $scope.txId = true;
                     $scope.address = "";
                     vcRecaptchaService.reload();
                     $scope.getBase();
