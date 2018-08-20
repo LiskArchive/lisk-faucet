@@ -23,7 +23,7 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha', 'reCaptchaModule'])
         $scope.getBase = function () {
             $scope.error = null;
 
-            $http.get("/api/getBase").then(function (resp) {
+            return $http.get("/api/getBase").then(function (resp) {
                 $scope.error = null;
 
                 if (resp.data && resp.data.success) {
@@ -75,8 +75,7 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha', 'reCaptchaModule'])
             });
         }
 
-        $scope.getBase();
-        $interval(function () {
-            $scope.getBase();
-        }, 60000);
+        $scope.getBase().then(function() {
+            vcRecaptchaService.reload();
+        });
     }]);
