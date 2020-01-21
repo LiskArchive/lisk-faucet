@@ -1,19 +1,38 @@
 const request = require('request'),
-      async = require('async'),
-      redis = require('./redis'),
-      simple_recaptcha = require('simple-recaptcha'),
-      lisk = require('lisk-elements').default;
+    async = require('async'),
+    redis = require('./redis'),
+    simple_recaptcha = require('simple-recaptcha'),
+    packageJson = require('../package.json');
+
+// const APIClient = require('@liskhq/lisk-api-client');
+// const transactions = require('@liskhq/lisk-transactions');
+// const cryptogrphy = require('@liskhq/lisk-cryptography');
+
+const { APIClient, transactions } = require('lisk-elements');
+
+const getApiClient = (app) => {
+    return new APIClient(
+        [ app.locals.liskUrl ],
+        {
+            client: {
+                name: 'Lisk Faucet',
+                version: packageJson.version,
+            },
+            nethash: app.locals.nethash,
+            // node: app.locals.liskUrl,
+            // randomizeNodes: false,
+        }
+    );
+};
 
 module.exports = function (app) {
     app.get("/api/getBase", function (req, res) {
-        const apiClient = new lisk.APIClient(
-            [ req.lisk ]
-        );
+        const apiClient = getApiClient(app);
 
         async.series([
             function (cb) {
                 apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
-                    cb(null, accounts.data[0].unconfirmedBalance);
+                    cb(null, accounts.data[0].balance);
                 }).catch(err => {
                     cb("Failed to get faucet balance");
                 });
@@ -133,17 +152,15 @@ module.exports = function (app) {
             },
             sendTransaction : function (cb) {
                 var amount      = app.locals.amountToSend * req.fixedPoint;
-                var transaction = lisk.transaction.transfer(
+                var transaction = transactions.transfer(
                     {
                         recipientId: address,
-                        amount: amount,
+                        amount: String(amount),
                         passphrase: app.locals.passphrase,
                     }
                 );
 
-                const apiClient = new lisk.APIClient(
-                    [ req.lisk ]
-                );
+                const apiClient = getApiClient(app);
                 apiClient.transactions.broadcast(transaction).then(transaction => {
                     return cb(null, transaction.data);
                 }).catch(err => {
@@ -169,8 +186,7 @@ module.exports = function (app) {
                     if (error) {
                         return res.json({ success : false, error : error });
                     } else {
-                        app.locals.totalCount++;
-                        return res.json({ success : true, txId : results[5].transactionId });
+                        return res.json({ success : true, txId : 'unknown' });
                     }
                 });
             }

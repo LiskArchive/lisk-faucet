@@ -33,8 +33,7 @@ if (config.lisk.port == 8000) {
     app.set("lisk network", 'testnet');
 }
 
-app.locals.host = process.env.LISK_HOST || config.lisk.host;
-app.locals.port = Number(process.env.LISK_PORT) || config.lisk.port;
+app.locals.liskUrl = process.env.LISK_URL || config.lisk.port;
 app.locals.nethash = process.env.LISK_NETHASH || config.lisk.nethash;
 app.locals.broadhash = process.env.LISK_BROADHASH || config.lisk.broadhash;
 app.locals.liskVersion = process.env.LISK_FAUCET_VERSION || config.lisk.version;
