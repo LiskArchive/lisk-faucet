@@ -19,8 +19,6 @@ const getApiClient = (app) => {
                 version: packageJson.version,
             },
             nethash: app.locals.nethash,
-            // node: app.locals.liskUrl,
-            // randomizeNodes: false,
         }
     );
 };
