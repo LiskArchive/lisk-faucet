@@ -34,6 +34,7 @@ angular.module("faucet", ['ngFx', 'vcRecaptcha', 'reCaptchaModule'])
                     $scope.captchaKey = resp.data.captchaKey;
                     $scope.totalCount = resp.data.totalCount;
                     $scope.network = resp.data.network;
+                    $scope.explorerUrl = resp.data.explorerUrl;
                     $scope.$broadcast('captchaPublicKeyUpdate', { captchaPublicKey: resp.data.captchaKey });
                 } else {
                     $scope.blockHideForm = true;

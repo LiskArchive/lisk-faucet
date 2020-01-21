@@ -55,11 +55,8 @@
             <div class="txId fx-fade-down" ng-show="txId">
                 <p><strong>{{amount}} LSK has been sent to your account.</p>
             </div>
-            <div class="testnet-notice" ng-if="network == 'testnet'">
-                <p>This faucet is currently running on a testnet.<br>All payouts are for testing purposes only.</p>
-            </div>
-            <div class="testnet-notice" ng-if="network == 'betanet'">
-                <p>This faucet is currently running on a betanet.<br>All payouts are for testing purposes only.</p>
+            <div class="testnet-notice">
+                <p>This faucet is currently running on {{network}}.<br>All payouts are for testing purposes only.</p>
             </div>
             <div class="send-form">
                 <form class="form">
@@ -72,8 +69,7 @@
             </div>
         </div>
         <div class="footer">Faucet address:
-            <a ng-if="network == 'testnet'" href="https://testnet-explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
-            <a ng-if="network == 'betanet'" href="https://betanet-explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
+            <a ng-href="{{explorerUrl}}/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
         </div>
         <script>
             loadScripts = (sources) => {

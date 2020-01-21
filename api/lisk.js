@@ -56,15 +56,15 @@ module.exports = function (app) {
                 }
 
                 return res.json({
-                    success : true,
-                    captchaKey : app.locals.captcha.publicKey,
-                    balance : balance / req.fixedPoint,
-                    fee : fee,
-                    hasBalance : hasBalance,
-                    amount : app.locals.amountToSend,
-                    donation_address : app.locals.address,
-                    totalCount : app.locals.totalCount,
-                    network : app.set("lisk network")
+                    success: true,
+                    captchaKey: app.locals.captcha.publicKey,
+                    balance: balance / req.fixedPoint,
+                    fee: fee,
+                    hasBalance: hasBalance,
+                    amount: app.locals.amountToSend,
+                    donation_address: app.locals.address,
+                    network: app.locals.network_name,
+                    explorerUrl: app.locals.explorerUrl,
                 });
             }
         });

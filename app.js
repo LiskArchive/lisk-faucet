@@ -23,24 +23,20 @@ var app = express();
 client.debug_mode = true;
 
 app.set('strict routing', true);
-app.set("lisk address", "http://" + config.lisk.host + ":" + config.lisk.port);
 
-if (config.lisk.port == 8000) {
-    app.set("lisk network", 'mainnet');
-} else if (config.lisk.port == 5000) {
-    app.set("lisk network", 'betanet');
-} else {
-    app.set("lisk network", 'testnet');
-}
-
-app.locals.liskUrl = process.env.LISK_CORE_URL || config.lisk.port;
+app.locals.liskUrl = process.env.LISK_CORE_URL || config.lisk.url;
 app.locals.nethash = process.env.LISK_CORE_NETHASH || config.lisk.nethash;
+app.locals.network_name = process.env.LISK_CORE_NETWORK_NAME || config.lisk.network_name;
 app.locals.liskVersion = process.env.LISK_CORE_VERSION || config.lisk.version;
 app.locals.liskMinVersion = process.env.LISK_CORE_MIN_VERSION || config.lisk.minVersion;
 app.locals.passphrase = process.env.LISK_FAUCET_PASSPHRASE || config.lisk.passphrase;
 app.locals.address = process.env.LISK_FAUCET_ADDRESS || config.lisk.address;
 app.locals.amountToSend = Number(process.env.LISK_FAUCET_AMOUNT) || config.amount;
 app.locals.cacheTTL = Number(process.env.LISK_FAUCET_TTL) || config.cacheTTL;
+app.locals.explorerUrl = process.env.LISK_EXPLORER_URL || config.explorerUrl;
+
+app.set("lisk address", app.locals.liskUrl);
+app.set("lisk network", 'unknown');
 
 console.log(`Using Lisk Core at ${app.locals.host}:${app.locals.port}`);
 
