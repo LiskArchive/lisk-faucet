@@ -4,10 +4,6 @@ const request = require('request'),
     simple_recaptcha = require('simple-recaptcha'),
     packageJson = require('../package.json');
 
-// const APIClient = require('@liskhq/lisk-api-client');
-// const transactions = require('@liskhq/lisk-transactions');
-// const cryptogrphy = require('@liskhq/lisk-cryptography');
-
 const { APIClient, transactions } = require('lisk-elements');
 
 const getApiClient = (app) => {
