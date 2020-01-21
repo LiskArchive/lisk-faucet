@@ -33,11 +33,10 @@ if (config.lisk.port == 8000) {
     app.set("lisk network", 'testnet');
 }
 
-app.locals.liskUrl = process.env.LISK_URL || config.lisk.port;
-app.locals.nethash = process.env.LISK_NETHASH || config.lisk.nethash;
-app.locals.broadhash = process.env.LISK_BROADHASH || config.lisk.broadhash;
-app.locals.liskVersion = process.env.LISK_FAUCET_VERSION || config.lisk.version;
-app.locals.liskMinVersion = process.env.LISK_FAUCET_MIN_VERSION || config.lisk.minVersion;
+app.locals.liskUrl = process.env.LISK_CORE_URL || config.lisk.port;
+app.locals.nethash = process.env.LISK_CORE_NETHASH || config.lisk.nethash;
+app.locals.liskVersion = process.env.LISK_CORE_VERSION || config.lisk.version;
+app.locals.liskMinVersion = process.env.LISK_CORE_MIN_VERSION || config.lisk.minVersion;
 app.locals.passphrase = process.env.LISK_FAUCET_PASSPHRASE || config.lisk.passphrase;
 app.locals.address = process.env.LISK_FAUCET_ADDRESS || config.lisk.address;
 app.locals.amountToSend = Number(process.env.LISK_FAUCET_AMOUNT) || config.amount;
