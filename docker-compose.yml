@@ -2,18 +2,18 @@ version: "3"
 services:
 
   lisk-faucet:
-    image: lisk/faucet:testnet
+    image: lisk/faucet:latest
     depends_on:
       - faucet-cache
     ports:
-      - "127.0.0.1:6000:6000"
+      - "3200:3200"
     networks:
       - lisk-faucet
     restart: on-failure
-    volumes:
-      - ./config.docker.json:/home/lisk/lisk-faucet/config.json
     environment:
       - NODE_ENV=production
+    env_file:
+      - .env
 
   faucet-cache:
     image: redis:alpine
