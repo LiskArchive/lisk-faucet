@@ -9,17 +9,56 @@
 
 1. Install node modules:
 
-  ```
-  npm install
-  ```
+```
+npm install
+```
 
 2. Start redis-server:
 
-  ```
-  redis-server > /dev/null 2>&1 &
-  ```
+```
+redis-server > /dev/null 2>&1 &
+```
 
 ## Configuration
+
+### Using environment variables
+
+This method is advised to use in Docker environment
+
+1. Place a copy of `./env/_template` file in the root directory and name it `.env`
+
+2. Edit the content so it reflects your configuration
+
+```bash
+LISK_CORE_URL=http://localhost:4000
+LISK_CORE_NETHASH=198f2b61a8eb95fbeed58b8216780b68f697f26b849acf00c8c93bb9b24f783d
+LISK_CORE_NETWORK_NAME=devnet
+LISK_CORE_VERSION=
+LISK_CORE_MIN_VERSION=
+LISK_FAUCET_PASSPHRASE=wagon stock borrow episode laundry kitten salute link globe zero feed marble
+LISK_FAUCET_ADDRESS=16313739661670634666L
+LISK_FAUCET_AMOUNT=1
+LISK_FAUCET_TTL=1
+LISK_EXPLORER_URL=https://localhost:6040
+REDIS_HOST=localhost
+REDIS_PORT=6379
+CAPTCHA_PUBLICKEY=6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI
+CAPTCHA_PRIVATEKEY=6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe
+```
+
+3. Run the server in the Docker environment
+
+```
+docker-compose up
+```
+
+> **Hint**: You can also run it command-line or export all variables
+>
+> ```bash
+> eval $(cat env/devnet.env) node app.js
+> ```
+
+### Using `config.json`
 
 Open `config.json` and complete the following details.
 
@@ -38,32 +77,38 @@ Open `config.json` and complete the following details.
 
   ```js
   "lisk" : {
-      "host" : "127.0.0.1", // <-- Server IP/hostname
-      "port" : 7000,        // <-- 7000 for testnet, 8000 for mainnet
+      "network_name": "devnet",
+      "url" : "http://127.0.0.1:4000", // <-- Lisk Core URL (7000 for testnet)
       "passphrase" : "",    // <-- Passphrase of faucet account
       "address" : ""        // <-- Address of faucet account
       "nethash": "",        // <-- Nethash of the network
-      "broadhash": "",      // <-- Broadhash of the network
       "version": "0.0.0a",  // <-- Expected version of lisk-core end point
       "minVersion": "0.0.0" // <-- Minimal version of lisk-core that will be accepted
   }
   ```
 
-3. Edit your Redis connection details:
+3. _(optional)_ Add Explorer URL:
+
+  ```js
+  "explorerUrl": "http://localhost:6040",
+  ```
+
+4. Edit your Redis connection details:
 
   ```js
   "redis" : {
       "host" : "127.0.0.1", // <-- Redis server host (default: 127.0.0.1)
       "port" : 6379,        // <-- Redis server port (default: 6379)
-      "password" : ""       // <-- Redis server password
   }
   ```
 
-4. Edit the faucet amount:
+5. Edit the faucet amount:
 
   ```js
   { "amount" : 1 }          // <-- Amount sent by faucet (default: 1)
   ```
+
+## 
 
 ## Launch
 
@@ -81,13 +126,21 @@ Production:
 NODE_ENV=production node app.js
 ```
 
-Open: [http://localhost:6000](http://localhost:6000)
+Open: [http://localhost:3200](http://localhost:3200)
 
-## Authors
+## Get Involved
 
-- Boris Povod <boris@crypti.me>
-- Oliver Beddows <oliver@lisk.io>
-- Max Kordek <max@lisk.io>
+|                           |                                                                                                                                  |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Found a bug               | [Create new issue](https://github.com/LiskHQ/lisk-service/issues/new)                                                            |
+| Want to develop with us   | [Read Contribution Guidelines](https://github.com/LiskHQ/lisk-service/blob/development/docs/CONTRIBUTING.md)                     |
+| Have ideas to share       | [Come to Lisk.chat](http://lisk.chat)                                                                                            |
+| Want to involve community | [Join community gitter](https://gitter.im/LiskHQ/lisk?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) |
+| Found a security issue    | [See our bounty program](https://blog.lisk.io/announcing-lisk-bug-bounty-program-5895bdd46ed4)                                   |
+
+## Contributors
+
+https://github.com/LiskHQ/lisk-service/graphs/contributors
 
 ## License
 
