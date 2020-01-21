@@ -2,11 +2,7 @@ var express = require('express'),
     config = require('./config.json').configuration,
     development = config.development,
     production = config.production,
-    redis = require('redis'),
-    client = redis.createClient(
-        config.redis.port,
-        config.redis.host
-    ),
+    redisClient = require('./api/redis'),
     async = require('async'),
     _ = require('underscore'),
     path = require('path'),
@@ -14,6 +10,13 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     multer = require('multer'),
     methodOverride = require('method-override');
+
+redisClient.init(
+    Number(process.env.REDIS_PORT) || config.redis.port,
+    process.env.REDIS_HOST || config.redis.host
+);
+
+const client = redisClient.getClient();
 
 var app = express();
 
@@ -30,16 +33,18 @@ if (config.lisk.port == 8000) {
     app.set("lisk network", 'testnet');
 }
 
-app.locals.host = config.lisk.host;
-app.locals.port = config.lisk.port;
-app.locals.nethash = config.lisk.nethash;
-app.locals.broadhash = config.lisk.broadhash;
-app.locals.liskVersion = config.lisk.version;
-app.locals.liskMinVersion = config.lisk.minVersion;
-app.locals.passphrase = config.lisk.passphrase;
-app.locals.address = config.lisk.address;
-app.locals.amountToSend = config.amount;
-app.locals.cacheTTL = config.cacheTTL;
+app.locals.host = process.env.LISK_HOST || config.lisk.host;
+app.locals.port = Number(process.env.LISK_PORT) || config.lisk.port;
+app.locals.nethash = process.env.LISK_NETHASH || config.lisk.nethash;
+app.locals.broadhash = process.env.LISK_BROADHASH || config.lisk.broadhash;
+app.locals.liskVersion = process.env.LISK_FAUCET_VERSION || config.lisk.version;
+app.locals.liskMinVersion = process.env.LISK_FAUCET_MIN_VERSION || config.lisk.minVersion;
+app.locals.passphrase = process.env.LISK_FAUCET_PASSPHRASE || config.lisk.passphrase;
+app.locals.address = process.env.LISK_FAUCET_ADDRESS || config.lisk.address;
+app.locals.amountToSend = Number(process.env.LISK_FAUCET_AMOUNT) || config.amount;
+app.locals.cacheTTL = Number(process.env.LISK_FAUCET_TTL) || config.cacheTTL;
+
+console.log(`Using Lisk Core at ${app.locals.host}:${app.locals.port}`);
 
 app.use(function (req, res, next) {
     req.lisk = app.get("lisk address");
@@ -75,6 +80,11 @@ if (app.get('env') === 'production') {
     app.set("host", production.host);
     app.set("port", production.port);
     app.locals.captcha = production.captcha;
+}
+
+if (process.env.CAPTCHA_PUBLICKEY && process.env.CAPTCHA_PRIVATEKEY) {
+    app.locals.captcha.publicKey = process.env.CAPTCHA_PUBLICKEY
+    app.locals.captcha.privateKey = process.env.CAPTCHA_PRIVATEKEY
 }
 
 api(app);
