@@ -4,7 +4,11 @@ const request = require('request'),
     simple_recaptcha = require('simple-recaptcha'),
     packageJson = require('../package.json');
 
-const { APIClient, transactions } = require('lisk-elements');
+const {
+    APIClient,
+    transactions,
+    cryptography
+} = require('lisk-elements');
 
 const getApiClient = (app) => {
     return new APIClient(
@@ -145,9 +149,11 @@ module.exports = function (app) {
                 });
             },
             sendTransaction : function (cb) {
-                var amount      = app.locals.amountToSend * req.fixedPoint;
-                var transaction = transactions.transfer(
+                const amount = app.locals.amountToSend * req.fixedPoint;
+                const networkIdentifier = cryptography.getNetworkIdentifier(app.locals.nethash, 'Lisk');
+                const transaction = transactions.transfer(
                     {
+                        networkIdentifier,
                         recipientId: address,
                         amount: String(amount),
                         passphrase: app.locals.passphrase,
