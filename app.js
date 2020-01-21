@@ -36,7 +36,7 @@ app.locals.explorerUrl = process.env.LISK_EXPLORER_URL || config.explorerUrl;
 app.set("lisk address", app.locals.liskUrl);
 app.set("lisk network", 'unknown');
 
-console.log(`Using Lisk Core at ${app.locals.host}:${app.locals.port}`);
+console.log(`Using Lisk Core at ${app.locals.liskUrl}`);
 
 app.use(function (req, res, next) {
     req.lisk = app.get("lisk address");
