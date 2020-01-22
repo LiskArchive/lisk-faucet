@@ -33,7 +33,7 @@
         <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon-16x16.png">
-        <link rel="manifest" href="/img/site.webmanifest">
+        <link rel="manifest" href="/site.webmanifest">
         <link rel="mask-icon" href="/img/safari-pinned-tab.svg" color="#5bbad5">
         <link rel="shortcut icon" href="/img/favicon.ico">
         <meta name="msapplication-TileColor" content="#00a300">
@@ -42,31 +42,25 @@
 
         <link rel="stylesheet" type="text/css" href="/css/animate.min.css">
         <link rel="stylesheet" type="text/css" href="/css/app.css">
-
-        <script src="https://www.google.com/recaptcha/api.js?onload=vcRecapthaApiLoaded&render=explicit" async defer></script>
-        <script type="text/javascript" src="/lib/angular.min.js"></script>
-        <script type="text/javascript" src="/lib/recaptcha.min.js"></script>
-        <script type="text/javascript" src="/lib/effects.min.js"></script>
-        <script type="text/javascript" src="/js/app.js"></script>
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans" />
     </head>
     <body ng-controller="mainController">
         <div class="main-block">
             <div class="logotype-block">
-                <p><a href="https://lisk.io/"><img src="/img/logo.png" alt="Lisk"></a></p>
+                <p><a href="https://lisk.io/"><img src="/img/logo.png" height="160" width="400" alt="Lisk"></a></p>
             </div>
             <div class="error fx-fade-down" ng-show="error">
                 <p><strong>Error:</strong> {{error}}</p>
             </div>
             <div class="txId fx-fade-down" ng-show="txId">
-                <p><strong>{{amount}} LSK sent, Transaction ID: </strong>{{txId}}</p>
+                <p><strong>{{amount}} LSK has been sent to your account.</p>
             </div>
-            <div class="testnet-notice" ng-if="network == 'testnet'">
-              <p>This faucet is currently running on a testnet.<br>All payouts are for testing purposes only.</p>
+            <div class="testnet-notice">
+                <p>This faucet is currently running on {{network}}.<br>All payouts are for testing purposes only.</p>
             </div>
             <div class="send-form">
                 <form class="form">
-                    <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk address to receive {{amount || 0}} LSK for free">
-                    <p class="msg">Don't have a Lisk address? Use our <a href="https://testnet.lisk.io/" target="_blank">web client</a> to create one!</p>
+                    <input type="text" ng-model="address" class="input" placeholder="Please enter your Lisk ID to receive {{amount || 0}} LSK for free">
                     <br>
                     <div recaptcha-custom></div>
                     <br>
@@ -75,7 +69,25 @@
             </div>
         </div>
         <div class="footer">Faucet address:
-            <a href="https://testnet-explorer.lisk.io/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
+            <a ng-href="{{explorerUrl}}/address/{{donation_address}}" target="_blank">{{donation_address || 'Unavailable'}}</a>
         </div>
+        <script>
+            loadScripts = (sources) => {
+                sources.forEach(src => {
+                    var script = document.createElement('script');
+                    script.src = src;
+                    script.async = false;
+                    document.body.appendChild( script );
+                });
+            };
+
+            loadScripts([
+                '/lib/angular.min.js',
+                '/lib/effects.min.js',
+                '/js/app.js',
+                'https://www.google.com/recaptcha/api.js?render=explicit',
+                '/lib/recaptcha.min.js',
+            ]);
+        </script>
     </body>
 </html>
