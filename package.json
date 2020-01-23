@@ -11,7 +11,10 @@
   "license": "MIT",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "testnet": "eval $(sed 's/=\\(.*\\)$/=\"\\1\"/' env/testnet.env) node app.js",
+    "betanet": "eval $(sed 's/=\\(.*\\)$/=\"\\1\"/' env/betanet.env) node app.js",
+    "devnet": "eval $(sed 's/=\\(.*\\)$/=\"\\1\"/' env/devnet.env) node app.js"
   },
   "dependencies": {
     "async": "^0.9.0",
