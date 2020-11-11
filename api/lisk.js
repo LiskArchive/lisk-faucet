@@ -12,7 +12,7 @@ const {
 
 const getApiClient = (app) => {
     return new APIClient(
-        [ app.locals.liskUrl ],
+        [app.locals.liskUrl],
         {
             client: {
                 name: 'Lisk Faucet',
@@ -22,6 +22,8 @@ const getApiClient = (app) => {
         }
     );
 };
+
+const MINIMUM_FEE = '1000000';
 
 module.exports = function (app) {
     app.get("/api/getBase", function (req, res) {
@@ -45,10 +47,10 @@ module.exports = function (app) {
             }
         ], function (error, result) {
             if (error) {
-                return res.json({ success : false, error : error });
+                return res.json({ success: false, error: error });
             } else {
-                var balance    = result[0],
-                    fee        = result[2],
+                var balance = result[0],
+                    fee = result[2],
                     hasBalance = false;
 
                 if (app.locals.amountToSend * req.fixedPoint + (app.locals.amountToSend * req.fixedPoint / 100 * fee) <= balance) {
@@ -92,11 +94,11 @@ module.exports = function (app) {
         }
 
         if (error) {
-            return res.json({ success : false, error : error });
+            return res.json({ success: false, error: error });
         }
 
         var parallel = {
-            authenticateIP : function (cb) {
+            authenticateIP: function (cb) {
                 redis.getClient().get(ip, function (error, value) {
                     if (error) {
                         return cb("Failed to authenticate IP address");
@@ -107,7 +109,7 @@ module.exports = function (app) {
                     }
                 });
             },
-            authenticateAddress : function (cb) {
+            authenticateAddress: function (cb) {
                 redis.getClient().get(address, function (error, value) {
                     if (error) {
                         return cb("Failed to authenticate Lisk ID");
@@ -121,7 +123,7 @@ module.exports = function (app) {
         }
 
         var series = {
-            validateCaptcha : function (cb) {
+            validateCaptcha: function (cb) {
                 simple_recaptcha(app.locals.captcha.privateKey, ip, captcha_response, function (error) {
                     if (error) {
                         return cb("Captcha validation failed, please try again");
@@ -130,7 +132,7 @@ module.exports = function (app) {
                     }
                 });
             },
-            cacheIP : function (cb) {
+            cacheIP: function (cb) {
                 redis.getClient().set(ip, ip, 'EX', app.locals.cacheTTL, function (error) {
                     if (error) {
                         return cb("Failed to cache IP address");
@@ -139,7 +141,7 @@ module.exports = function (app) {
                     }
                 });
             },
-            cacheAddress : function (cb) {
+            cacheAddress: function (cb) {
                 redis.getClient().set(address, address, 'EX', app.locals.cacheTTL, function (error) {
                     if (error) {
                         return cb("Failed to cache Lisk ID");
@@ -148,24 +150,13 @@ module.exports = function (app) {
                     }
                 });
             },
-            sendTransaction : function (cb) {
-                const amount = app.locals.amountToSend * req.fixedPoint;
-                const networkIdentifier = cryptography.getNetworkIdentifier(app.locals.nethash, 'Lisk');
-                const transaction = transactions.transfer(
-                    {
-                        networkIdentifier,
-                        recipientId: address,
-                        amount: String(amount),
-                        passphrase: app.locals.passphrase,
-                    }
-                );
-
+            getAccount: function (cb) {
                 const apiClient = getApiClient(app);
-                apiClient.transactions.broadcast(transaction).then(transaction => {
-                    return cb(null, transaction.data);
+
+                apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
+                    cb(null, accounts.data[0]);
                 }).catch(err => {
-                    console.log(err.message);
-                    return cb("Failed to send transaction");
+                    cb("Failed to get faucet account");
                 });
             },
         };
@@ -175,18 +166,39 @@ module.exports = function (app) {
             parallel.authenticateAddress
         ], function (error, values) {
             if (error) {
-                return res.json({ success : false, error : error });
+                return res.json({ success: false, error: error });
             } else {
                 async.series([
                     series.validateCaptcha,
                     series.cacheIP,
                     series.cacheAddress,
-                    series.sendTransaction,
+                    series.getAccount,
                 ], function (error, results) {
                     if (error) {
-                        return res.json({ success : false, error : error });
+                        return res.json({ success: false, error: error });
                     } else {
-                        return res.json({ success : true, txId : 'unknown' });
+                        const apiClient = getApiClient(app);
+                        const account = results[4];
+                        const amount = app.locals.amountToSend * req.fixedPoint;
+                        const networkIdentifier = cryptography.getNetworkIdentifier(app.locals.nethash, 'Lisk');
+                        const transaction = transactions.transfer(
+                            {
+                                networkIdentifier,
+                                recipientId: address,
+                                amount: String(amount),
+                                passphrase: app.locals.passphrase,
+                                nonce: account.nonce,
+                                fee: MINIMUM_FEE,
+                                amount,
+                            }
+                        );
+
+                        apiClient.transactions.broadcast(transaction).then(transaction => {
+                            return cb(null, transaction.data);
+                        }).catch(err => {
+                            console.log(err.message);
+                            return cb("Failed to send transaction");
+                        });
                     }
                 });
             }

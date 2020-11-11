@@ -20,7 +20,7 @@
     "async": "^0.9.0",
     "body-parser": "^1.18.2",
     "express": "^3.21.2",
-    "lisk-elements": "^3.0.0",
+    "lisk-elements": "^4.0.0",
     "method-override": "^2.3.10",
     "moment": "^2.8.3",
     "multer": "^1.3.0",
