@@ -1,4 +1,5 @@
-FROM node:8 AS builder
+ARG NODEJS_VERSION=12
+FROM node:$NODEJS_VERSION AS builder
 
 COPY . /home/lisk/lisk-faucet/
 RUN useradd lisk && \
@@ -7,7 +8,7 @@ USER lisk
 RUN cd /home/lisk/lisk-faucet && \
     npm install
 
-FROM node:8-alpine
+FROM node:$NODEJS_VERSION-alpine
 
 RUN adduser -D lisk
 COPY --chown=lisk:lisk --from=builder /home/lisk/lisk-faucet /home/lisk/lisk-faucet
