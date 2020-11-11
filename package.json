@@ -1,6 +1,6 @@
 {
   "name": "lisk-faucet",
-  "version": "3.0.0-beta.1",
+  "version": "4.0.0-beta.0",
   "description": "Lisk faucet application",
   "repository": {
     "type": "git",
