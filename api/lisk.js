@@ -37,20 +37,12 @@ module.exports = function (app) {
                     cb("Failed to get faucet balance");
                 });
             },
-            function (cb) {
-                apiClient.node.getConstants()
-                    .then(constants => {
-                        cb(null, constants.data.fees.send);
-                    }).catch(err => {
-                        cb("Failed to establish transaction fee");
-                    });
-            }
         ], function (error, result) {
             if (error) {
                 return res.json({ success: false, error: error });
             } else {
                 var balance = result[0],
-                    fee = result[2],
+                    fee = MINIMUM_FEE,
                     hasBalance = false;
 
                 if (app.locals.amountToSend * req.fixedPoint + (app.locals.amountToSend * req.fixedPoint / 100 * fee) <= balance) {
