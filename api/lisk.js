@@ -6,8 +6,7 @@ const request = require('request'),
 
 const {
     APIClient,
-    transactions,
-    cryptography
+    transactions
 } = require('lisk-elements');
 
 const getApiClient = (app) => {
@@ -148,7 +147,7 @@ module.exports = function (app) {
                 apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
                     cb(null, accounts.data[0]);
                 }).catch(err => {
-                    cb("Failed to get faucet account");
+                    cb(`Failed to get faucet account: ${err.message}`);
                 });
             },
         };
@@ -170,9 +169,9 @@ module.exports = function (app) {
                         return res.json({ success: false, error: error });
                     } else {
                         const apiClient = getApiClient(app);
-                        const account = results[4];
+                        const account = results[3];
                         const amount = app.locals.amountToSend * req.fixedPoint;
-                        const networkIdentifier = cryptography.getNetworkIdentifier(app.locals.nethash, 'Lisk');
+                        const networkIdentifier = app.locals.nethash;
                         const transaction = transactions.transfer(
                             {
                                 networkIdentifier,
@@ -181,15 +180,16 @@ module.exports = function (app) {
                                 passphrase: app.locals.passphrase,
                                 nonce: account.nonce,
                                 fee: MINIMUM_FEE,
-                                amount,
                             }
                         );
 
                         apiClient.transactions.broadcast(transaction).then(transaction => {
-                            return cb(null, transaction.data);
+                            return res.json({
+                                success: true,
+                                message: transaction.data.message,
+                            });
                         }).catch(err => {
-                            console.log(err.message);
-                            return cb("Failed to send transaction");
+                            return  res.json({ success: false, error: `Failed to send transaction: ${err.message}` });
                         });
                     }
                 });
