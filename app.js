@@ -6,8 +6,8 @@ var express = require('express'),
     path = require('path'),
     api = require('./api'),
     bodyParser = require('body-parser'),
-    multer = require('multer'),
-    methodOverride = require('method-override');
+    methodOverride = require('method-override'),
+    compression = require('compression');
 
 redisClient.init(
     Number(process.env.REDIS_PORT) || config.redis.port,
@@ -53,14 +53,11 @@ app.use(function (req, res, next) {
     return next();
 });
 
-
-app.use(express.logger());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.compress());
+app.use(compression());
 app.use(methodOverride());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(multer());
 
 if (app.get('env') === 'development') {
     app.set("host", development.host);
