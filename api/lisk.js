@@ -6,8 +6,8 @@ const request = require('request'),
 
 const {
     APIClient,
-    transactions,
-    cryptography
+    cryptography,
+    transactions
 } = require('lisk-elements');
 
 const getApiClient = (app) => {
@@ -34,23 +34,15 @@ module.exports = function (app) {
                 apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
                     cb(null, accounts.data[0].balance);
                 }).catch(err => {
-                    cb("Failed to get faucet balance");
+                    cb(`Failed to get faucet balance: ${app.locals.address}`);
                 });
             },
-            function (cb) {
-                apiClient.node.getConstants()
-                    .then(constants => {
-                        cb(null, constants.data.fees.send);
-                    }).catch(err => {
-                        cb("Failed to establish transaction fee");
-                    });
-            }
         ], function (error, result) {
             if (error) {
                 return res.json({ success: false, error: error });
             } else {
                 var balance = result[0],
-                    fee = result[2],
+                    fee = MINIMUM_FEE,
                     hasBalance = false;
 
                 if (app.locals.amountToSend * req.fixedPoint + (app.locals.amountToSend * req.fixedPoint / 100 * fee) <= balance) {
@@ -156,7 +148,7 @@ module.exports = function (app) {
                 apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
                     cb(null, accounts.data[0]);
                 }).catch(err => {
-                    cb("Failed to get faucet account");
+                    cb(`Failed to get faucet account: ${err.message}`);
                 });
             },
         };
@@ -178,7 +170,7 @@ module.exports = function (app) {
                         return res.json({ success: false, error: error });
                     } else {
                         const apiClient = getApiClient(app);
-                        const account = results[4];
+                        const account = results[3];
                         const amount = app.locals.amountToSend * req.fixedPoint;
                         const networkIdentifier = cryptography.getNetworkIdentifier(app.locals.nethash, 'Lisk');
                         const transaction = transactions.transfer(
@@ -189,15 +181,16 @@ module.exports = function (app) {
                                 passphrase: app.locals.passphrase,
                                 nonce: account.nonce,
                                 fee: MINIMUM_FEE,
-                                amount,
                             }
                         );
 
                         apiClient.transactions.broadcast(transaction).then(transaction => {
-                            return cb(null, transaction.data);
+                            return res.json({
+                                success: true,
+                                message: transaction.data.message,
+                            });
                         }).catch(err => {
-                            console.log(err.message);
-                            return cb("Failed to send transaction");
+                            return  res.json({ success: false, error: `Failed to send transaction: ${err.message}` });
                         });
                     }
                 });
