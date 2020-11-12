@@ -6,6 +6,7 @@ const request = require('request'),
 
 const {
     APIClient,
+    cryptography,
     transactions
 } = require('lisk-elements');
 
@@ -33,7 +34,7 @@ module.exports = function (app) {
                 apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
                     cb(null, accounts.data[0].balance);
                 }).catch(err => {
-                    cb("Failed to get faucet balance");
+                    cb(`Failed to get faucet balance: ${app.locals.address}`);
                 });
             },
         ], function (error, result) {
@@ -171,7 +172,7 @@ module.exports = function (app) {
                         const apiClient = getApiClient(app);
                         const account = results[3];
                         const amount = app.locals.amountToSend * req.fixedPoint;
-                        const networkIdentifier = app.locals.nethash;
+                        const networkIdentifier = cryptography.getNetworkIdentifier(app.locals.nethash, 'Lisk');
                         const transaction = transactions.transfer(
                             {
                                 networkIdentifier,
