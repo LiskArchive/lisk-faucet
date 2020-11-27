@@ -5,7 +5,7 @@
             "port": 3000,
             "captcha" : {
                 "publicKey" : "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
-                "privateKey" : "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                "privateKey" : "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
             }
         },
         "production": {
@@ -18,9 +18,9 @@
         },
         "lisk" : {
             "network_name": "devnet",
-            "url" : "http://127.0.0.1:4000",
+            "url" : "ws://127.0.0.1:8080/ws",
             "passphrase" : "wagon stock borrow episode laundry kitten salute link globe zero feed marble",
-            "address" : "16313739661670634666L",
+            "address" : "lskq46x4qb4x9t7pmcdet8rzbttyp7x6pr69q2eyq",
             "nethash": "198f2b61a8eb95fbeed58b8216780b68f697f26b849acf00c8c93bb9b24f783d",
             "version": "0.0.0a",
             "minVersion": "0.0.0"
