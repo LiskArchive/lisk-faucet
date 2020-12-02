@@ -1,200 +1,109 @@
-const request = require('request'),
-    async = require('async'),
-    redis = require('./redis'),
-    simple_recaptcha = require('simple-recaptcha'),
-    packageJson = require('../package.json');
-
+const redis = require('./redis');
+const simple_recaptcha = require('simple-recaptcha');
 const {
-    APIClient,
+    apiClient,
     cryptography,
-    transactions
-} = require('lisk-elements');
-
-const getApiClient = (app) => {
-    return new APIClient(
-        [app.locals.liskUrl],
-        {
-            client: {
-                name: 'Lisk Faucet',
-                version: packageJson.version,
-            },
-            nethash: app.locals.nethash,
-        }
-    );
-};
+    transactions,
+} = require('@liskhq/lisk-client');
 
 const MINIMUM_FEE = '1000000';
 
-module.exports = function (app) {
-    app.get("/api/getBase", function (req, res) {
-        const apiClient = getApiClient(app);
-
-        async.series([
-            function (cb) {
-                apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
-                    cb(null, accounts.data[0].balance);
-                }).catch(err => {
-                    cb(`Failed to get faucet balance: ${app.locals.address}`);
-                });
-            },
-        ], function (error, result) {
-            if (error) {
-                return res.json({ success: false, error: error });
-            } else {
-                var balance = result[0],
-                    fee = MINIMUM_FEE,
-                    hasBalance = false;
-
-                if (app.locals.amountToSend * req.fixedPoint + (app.locals.amountToSend * req.fixedPoint / 100 * fee) <= balance) {
-                    hasBalance = true;
-                }
-
-                return res.json({
-                    success: true,
-                    captchaKey: app.locals.captcha.publicKey,
-                    balance: balance / req.fixedPoint,
-                    fee: fee,
-                    hasBalance: hasBalance,
-                    amount: app.locals.amountToSend,
-                    donation_address: app.locals.address,
-                    network: app.locals.network_name,
-                    explorerUrl: app.locals.explorerUrl,
-                });
+const getFromRedis = async value => {
+    const result = await new Promise((resolve, reject) => {
+        redis.getClient().get(value, (err, result) => {
+            if (err) {
+                return reject(err);
             }
+            return resolve(result);
         });
     });
+    return result;
+};
 
-    app.post("/api/sendLisk", function (req, res) {
-        var error = null,
-            address = req.body.address,
-            captcha_response = req.body.captcha,
-            ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+module.exports = function (app) {
+    app.get("/api/getBase", async function (req, res) {
+        try {
+            const client = await apiClient.createWSClient(app.locals.liskUrl);
+            const account = await client.account.get(cryptography.getAddressFromBase32Address(app.locals.address));
+            const fee = BigInt(MINIMUM_FEE);
+            const totalAmount = BigInt(transactions.convertLSKToBeddows(String(app.locals.amountToSend))) + fee;
+            const hasBalance = account.token.balance >= totalAmount;
+            return res.json({
+                success: true,
+                captchaKey: app.locals.captcha.publicKey,
+                balance: transactions.convertBeddowsToLSK(account.token.balance.toString()),
+                fee: fee.toString(),
+                hasBalance: hasBalance,
+                amount: app.locals.amountToSend,
+                donation_address: app.locals.address,
+                network: app.locals.network_name,
+                explorerUrl: app.locals.explorerUrl,
+            });
+        } catch (error) {
+            res.json({ success: false, error: error.message });
+        }
+    });
 
-        if (!address) { error = "Missing Lisk ID"; }
-
-        if (!captcha_response) { error = "Captcha validation failed, please try again"; }
-
-        if (address) {
-            address = address.trim();
-
-            if (address.indexOf('L') != address.length - 1 && address.indexOf('D') != address.length - 1) {
-                error = "Invalid Lisk ID";
+    app.post("/api/sendLisk", async function (req, res) {
+        const { address, captcha: captcha_response } = req.body;
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress; 
+        if (!address) {
+            return res.json({ success: false, error: 'Missing Lisk Address' });
+        }
+        if (!captcha_response) {
+            return res.json({ success: false, error: 'Captcha validation failed, please try again' });
+        }
+        if (!cryptography.validateBase32Address(address)) {
+            return res.json({ success: false, error: 'Invalid Lisk Address' });
+        }
+        try {
+            const result = await getFromRedis(ip);
+            if (result) {
+                return res.json({ success: false, error: 'This IP address has already received LSK' });
             }
-
-            var num = address.substring(0, address.length - 1);
-            if (isNaN(num)) { error = "Invalid Lisk ID"; }
+        } catch (error) {
+            return res.json({ success: false, error: 'Failed to authenticate IP address' });
         }
-
-        if (error) {
-            return res.json({ success: false, error: error });
-        }
-
-        var parallel = {
-            authenticateIP: function (cb) {
-                redis.getClient().get(ip, function (error, value) {
-                    if (error) {
-                        return cb("Failed to authenticate IP address");
-                    } else if (value) {
-                        return cb("This IP address has already received LSK");
-                    } else {
-                        return cb(null);
-                    }
-                });
-            },
-            authenticateAddress: function (cb) {
-                redis.getClient().get(address, function (error, value) {
-                    if (error) {
-                        return cb("Failed to authenticate Lisk ID");
-                    } else if (value) {
-                        return cb("This account has already received LSK");
-                    } else {
-                        return cb(null);
-                    }
-                });
+        try {
+            const result = await getFromRedis(address);
+            if (result) {
+                return res.json({ success: false, error: 'This account has already received LSK' });
             }
+        } catch (error) {
+            return res.json({ success: false, error: 'Failed to authenticate Lisk address' });
         }
 
-        var series = {
-            validateCaptcha: function (cb) {
+        try {
+            await new Promise((resolve, reject) => {
                 simple_recaptcha(app.locals.captcha.privateKey, ip, captcha_response, function (error) {
                     if (error) {
-                        return cb("Captcha validation failed, please try again");
-                    } else {
-                        return cb(null);
+                        return reject(new Error('Captcha validation failed, please try again'));
                     }
+                    return resolve();
                 });
-            },
-            cacheIP: function (cb) {
-                redis.getClient().set(ip, ip, 'EX', app.locals.cacheTTL, function (error) {
-                    if (error) {
-                        return cb("Failed to cache IP address");
-                    } else {
-                        return cb(null);
-                    }
-                });
-            },
-            cacheAddress: function (cb) {
-                redis.getClient().set(address, address, 'EX', app.locals.cacheTTL, function (error) {
-                    if (error) {
-                        return cb("Failed to cache Lisk ID");
-                    } else {
-                        return cb(null);
-                    }
-                });
-            },
-            getAccount: function (cb) {
-                const apiClient = getApiClient(app);
-
-                apiClient.accounts.get({ address: app.locals.address }).then(accounts => {
-                    cb(null, accounts.data[0]);
-                }).catch(err => {
-                    cb(`Failed to get faucet account: ${err.message}`);
-                });
-            },
-        };
-
-        async.parallel([
-            parallel.authenticateIP,
-            parallel.authenticateAddress
-        ], function (error, values) {
-            if (error) {
-                return res.json({ success: false, error: error });
-            } else {
-                async.series([
-                    series.validateCaptcha,
-                    series.cacheIP,
-                    series.cacheAddress,
-                    series.getAccount,
-                ], function (error, results) {
-                    if (error) {
-                        return res.json({ success: false, error: error });
-                    } else {
-                        const apiClient = getApiClient(app);
-                        const account = results[3];
-                        const amount = app.locals.amountToSend * req.fixedPoint;
-                        const networkIdentifier = cryptography.getNetworkIdentifier(app.locals.nethash, 'Lisk');
-                        const transaction = transactions.transfer(
-                            {
-                                networkIdentifier,
-                                recipientId: address,
-                                amount: String(amount),
-                                passphrase: app.locals.passphrase,
-                                nonce: account.nonce,
-                                fee: MINIMUM_FEE,
-                            }
-                        );
-
-                        apiClient.transactions.broadcast(transaction).then(transaction => {
-                            return res.json({
-                                success: true,
-                                message: transaction.data.message,
-                            });
-                        }).catch(err => {
-                            return  res.json({ success: false, error: `Failed to send transaction: ${err.message}` });
-                        });
-                    }
-                });
-            }
-        });
+            });
+            await redis.getClient().set(ip, ip, 'EX', app.locals.cacheTTL);
+            await redis.getClient().set(address, address, 'EX', app.locals.cacheTTL);
+            const client = await apiClient.createWSClient(app.locals.liskUrl);
+            await client.account.get(cryptography.getAddressFromBase32Address(app.locals.address));
+            const amount = BigInt(transactions.convertLSKToBeddows(String(app.locals.amountToSend)));
+            const tx = await client.transaction.create({
+                moduleName: 'token',
+                assetName: 'transfer',
+                fee: BigInt(MINIMUM_FEE),
+                asset: {
+                    recipientAddress: cryptography.getAddressFromBase32Address(address),
+                    amount,
+                    data: '',
+                },
+            }, app.locals.passphrase);
+            await client.transaction.send(tx);
+            res.json({
+                success: true,
+                message: 'Successfully sent transaction',
+            });
+        } catch (error) {
+            return res.json({ success: false, error: error.message });
+        }
     });
 }
